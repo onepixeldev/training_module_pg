@@ -18,15 +18,15 @@ class Training_application_model extends MY_Model
     public function getTrainingAdminDeptCode() {
 		$sID = $this->staff_id;
 		
-        $this->db->select('HP_PARM_DESC AS PARM_DESC');
-        $this->db->from('HRADMIN_PARMS');
-        $this->db->join('STAFF_MAIN','SM_DEPT_CODE = UPPER(TRIM(HP_PARM_DESC))');
-        $this->db->where('HP_PARM_CODE', 'TRAINING_ADM_DEPT_CODE');
-        $this->db->where('SM_STAFF_ID', $sID);
+        $this->db->select('hp_parm_desc AS PARM_DESC');
+        $this->db->from('ims_hris.hradmin_parms');
+        $this->db->join('ims_hris.staff_main','sm_dept_code = UPPER(TRIM(BOTH HP_PARM_DESC))');
+        $this->db->where('hp_parm_code', 'TRAINING_ADM_DEPT_CODE');
+        $this->db->where('sm_staff_id', $sID);
         $query = $this->db->get();
 		
         if ($query->num_rows() > 0) {
-            if ($query->row()->PARM_DESC == '' or $query->row()->PARM_DESC == null){
+            if ($query->row()->PARM_DESC == '' or $query->row()->PARM_DESC == null or $query->row()->PARM_DESC == 0){
                 return '';
             }else{
                 return $query->row()->PARM_DESC;
@@ -65,15 +65,15 @@ class Training_application_model extends MY_Model
     public function getTrainingInfo2($deptCode)
     {
         $this->db->select('*');
-        $this->db->from('TRAINING_HEAD');
+        $this->db->from('ims_hris.training_head');
         
-        $this->db->where("TH_STATUS = 'ENTRY'");
+        $this->db->where("th_status = 'ENTRY'");
         if(!empty($deptCode)) {
-            $this->db->where("TH_DEPT_CODE", $deptCode);
+            $this->db->where("th_dept_code", $deptCode);
         }
         // $this->db->where("TH_DEPT_CODE = (SELECT SM_DEPT_CODE FROM STAFF_MAIN WHERE UPPER(SM_APPS_USERNAME) = UPPER('$umg'))");
-        $this->db->where("TH_INTERNAL_EXTERNAL NOT IN ('EXTERNAL_AGENCY')");
-        $this->db->order_by("TH_DATE_FROM, TH_DATE_TO, TH_TRAINING_TITLE, TH_REF_ID");
+        $this->db->where("th_internal_external NOT IN ('EXTERNAL_AGENCY')");
+        $this->db->order_by("th_date_from, th_date_to, th_training_title, th_ref_id");
         $q = $this->db->get();
         
         return $q->result();
@@ -236,30 +236,29 @@ class Training_application_model extends MY_Model
     // DROPDOWN TYPE LIST
     public function getTypeList()
     {
-        $this->db->select("TT_CODE, TT_CODE ||' - '|| TT_DESC AS TT_CODE_DESC");
-        $this->db->from("TRAINING_TYPE");
+        $this->db->select('tt_code as TT_CODE, tt_code ||\' - \'|| tt_desc as "TT_CODE_DESC"');
+        $this->db->from('ims_hris.training_type');
         $q = $this->db->get();
-        
         return $q->result();
     }
 
     // SELECT STRUCTURED TRAINING
     public function getStructuredTraining($strTrCode = null)
     {
-        $this->db->select("TTH_REF_ID, TTH_REF_ID ||' - '|| TTH_TRAINING_TITLE AS TTH_REF_TITLE, 
-        TTH_TRAINING_TITLE, TTH_CATEGORY, TTH_FIELD ||' - '|| TF_FIELD_DESC AS TTH_TF_FIELD_DESC, TTH_TYPE ||' - '|| TT_DESC AS TTH_TT_TYPE_DESC, TTH_COMPETENCY");
-        $this->db->from("TNA_TRAINING_HEAD, TRAINING_TYPE, TRAINING_FIELD");
-        $this->db->where("TTH_TYPE = TT_CODE");
-        $this->db->where("NVL(TTH_STATUS,'INACTIVE') = 'ACTIVE'");
-        $this->db->where("TTH_FIELD = TF_CODE");
+        $this->db->select('tth_ref_id TTH_REF_ID, tth_ref_id ||\' - \'|| tth_training_title "TTH_REF_TITLE", 
+        tth_training_title TTH_TRAINING_TITLE, tth_category TTH_CATEGORY, tth_field ||\' - \'|| tf_field_desc "TTH_TF_FIELD_DESC", tth_type ||\' - \'|| tt_desc "TTH_TT_TYPE_DESC", tth_competency TTH_COMPETENCY');
+        $this->db->from("ims_hris.tna_training_head, ims_hris.training_type, ims_hris.training_field");
+        $this->db->where("tth_type = tt_code");
+        $this->db->where("coalesce(tth_status,'INACTIVE') = 'ACTIVE'");
+        $this->db->where("tth_field = tf_code");
 
         if(!empty($strTrCode)){
-            $this->db->where("TTH_REF_ID", $strTrCode);
+            $this->db->where("tth_ref_id", $strTrCode);
             $q = $this->db->get();
         
             return $q->row();
         } else {
-            $this->db->order_by("TTH_REF_ID");
+            $this->db->order_by("tth_ref_id");
             $q = $this->db->get();
             
             return $q->result();
@@ -269,9 +268,9 @@ class Training_application_model extends MY_Model
     // DROPDOWN CATEGORY LIST
     public function getCategoryList()
     {
-        $this->db->select("TC_CATEGORY");
-        $this->db->from("TRAINING_CATEGORY");
-        $this->db->where("NVL(TC_STATUS,'N') = 'Y'");
+        $this->db->select("tc_category TC_CATEGORY");
+        $this->db->from("ims_hris.training_category");
+        $this->db->where("coalesce(tc_status,'N') = 'Y'");
         $this->db->order_by("1");
         $q = $this->db->get();
         
@@ -281,8 +280,8 @@ class Training_application_model extends MY_Model
     // DROPDOWN LEVEL LIST
     public function getLevelList()
     {
-        $this->db->select("TL_CODE, TL_CODE ||' - '|| TL_DESC AS TL_CODE_DESC");
-        $this->db->from("TRAINING_LEVEL");
+        $this->db->select('tl_code TL_CODE, tl_code ||\' - \'|| tl_desc "TL_CODE_DESC"');
+        $this->db->from('ims_hris.training_level');
         $this->db->order_by("TL_CODE");
         $q = $this->db->get();
         
@@ -292,10 +291,10 @@ class Training_application_model extends MY_Model
     // DROPDOWN AREA LIST
     public function getAreaList()
     {
-        $this->db->select("TF_CODE, TF_CODE ||' - '|| TF_FIELD_DESC AS TF_CODE_DESC");
-        $this->db->from("TRAINING_FIELD");
-        $this->db->where("NVL(TF_STATUS,'N') = 'Y'");
-        $this->db->order_by("TF_RANKING");
+        $this->db->select('tf_code TF_CODE, tf_code ||\' - \'|| tf_field_desc "TF_CODE_DESC"');
+        $this->db->from('ims_hris.training_field');
+        $this->db->where("coalesce(tf_status,'N') = 'Y'");
+        $this->db->order_by('tf_ranking');
         $q = $this->db->get();
         
         return $q->result();
@@ -305,8 +304,8 @@ class Training_application_model extends MY_Model
     public function getSgroupList()
     {
         //select SG_GROUP_CODE,SG_GROUP_DESC from service_group order by 1
-        $this->db->select("SG_GROUP_CODE, SG_GROUP_CODE ||' - '|| SG_GROUP_DESC AS SG_CODE_DESC");
-        $this->db->from("SERVICE_GROUP");
+        $this->db->select('sg_group_code SG_GROUP_CODE, sg_group_code ||\' - \'|| sg_group_desc "SG_CODE_DESC"');
+        $this->db->from('ims_hris.service_group');
         $this->db->order_by("1");
         $q = $this->db->get();
         
@@ -315,9 +314,9 @@ class Training_application_model extends MY_Model
 
     // DROPDOWN COUNTRY LIST
     public function getCountryList() {
-        $this->db->select('CM_COUNTRY_CODE, CM_COUNTRY_DESC');
-        $this->db->from('COUNTRY_MAIN');
-        $this->db->order_by('CM_COUNTRY_DESC');
+        $this->db->select('cm_country_code CM_COUNTRY_CODE, cm_country_desc CM_COUNTRY_DESC');
+        $this->db->from('ims_hris.country_main');
+        $this->db->order_by("CM_COUNTRY_DESC");
         $q = $this->db->get();
 		        
         return $q->result();
@@ -325,9 +324,9 @@ class Training_application_model extends MY_Model
 
     // DEFAULT COUNTRY
     public function getCountryDef() {
-        $this->db->select('CM_COUNTRY_CODE, CM_COUNTRY_DESC');
-        $this->db->from('COUNTRY_MAIN');
-        $this->db->where("CM_COUNTRY_CODE = 'MYS'");
+        $this->db->select('cm_country_code CM_COUNTRY_CODE, cm_country_desc CM_COUNTRY_DESC');
+        $this->db->from('ims_hris.country_main');
+        $this->db->where("cm_country_code = 'MYS'");
         $q = $this->db->get();
 		        
         return $q->row();
@@ -335,10 +334,10 @@ class Training_application_model extends MY_Model
 
     // DROPDOWN STATE LIST
     public function getCountryStateList($countCode) {
-        $this->db->select('SM_STATE_CODE, SM_STATE_DESC, SM_COUNTRY_CODE');
-        $this->db->from('STATE_MAIN');
-		$this->db->where('SM_COUNTRY_CODE', $countCode);
-        $this->db->order_by('SM_STATE_CODE');
+        $this->db->select('sm_state_code SM_STATE_CODE, sm_state_desc SM_STATE_DESC, sm_country_code SM_COUNTRY_CODE');
+        $this->db->from('ims_hris.state_main');
+		$this->db->where('sm_country_code', $countCode);
+        $this->db->order_by('sm_state_code');
         $q = $this->db->get();
         
         return $q->result();
@@ -346,10 +345,10 @@ class Training_application_model extends MY_Model
 
     // DROPDOWN COMPETENCY LEVEL LIST
     public function getCompetencyLevel() {
-        $this->db->select("TCL_COMPETENCY_CODE, TCL_COMPETENCY_CODE ||' - '|| TCL_COMPETENCY_DESC AS TCL_COMPETENCY_CODE_DESC, TCL_SERVICE_YEAR_FROM, TCL_SERVICE_YEAR_TO,TCL_ORDERING");
-        $this->db->from('TRAINING_COMPETENCY_LEVEL');
-		$this->db->where("TCL_STATUS = 'Y'");
-        $this->db->order_by('TCL_ORDERING');
+        $this->db->select('tcl_competency_code TCL_COMPETENCY_CODE, tcl_competency_code ||\' - \'|| tcl_competency_desc "TCL_COMPETENCY_CODE_DESC", tcl_service_year_from TCL_SERVICE_YEAR_FROM, tcl_service_year_to TCL_SERVICE_YEAR_TO,tcl_ordering TCL_ORDERING');
+        $this->db->from('ims_hris.training_competency_level');
+		$this->db->where("tcl_status = 'Y'");
+        $this->db->order_by("TCL_ORDERING");
         $q = $this->db->get();
         
         return $q->result();
@@ -357,12 +356,12 @@ class Training_application_model extends MY_Model
 
     // DROPDOWN STAFF LIST
     public function getCoordinator() {
-        $this->db->select("SM_STAFF_ID, SM_STAFF_ID ||' - '|| SM_STAFF_NAME AS SM_STAFF_ID_NAME");
-        $this->db->from('STAFF_MAIN, STAFF_STATUS');
-        $this->db->where("SM_STAFF_STATUS = SS_STATUS_CODE");
-        $this->db->where("SS_STATUS_STS = 'ACTIVE'");
-        $this->db->where("SM_STAFF_TYPE = 'STAFF'");
-        $this->db->order_by('SM_STAFF_NAME');
+        $this->db->select('sm_staff_id SM_STAFF_ID, sm_staff_id ||\' - \'|| sm_staff_name "SM_STAFF_ID_NAME"');
+        $this->db->from('ims_hris.staff_main, ims_hris.staff_status');
+        $this->db->where("sm_staff_status = ss_status_code");
+        $this->db->where("ss_status_sts = 'ACTIVE'");
+        $this->db->where("sm_staff_type = 'STAFF'");
+        $this->db->order_by('sm_staff_name');
         $q = $this->db->get();
         
         return $q->result();
@@ -370,9 +369,9 @@ class Training_application_model extends MY_Model
 
     // DROPDOWN SECTOR LEVEL LIST
     public function getCoordinatorSec() {
-        $this->db->select("TSL_CODE, TSL_CODE ||' - '|| TSL_DESC AS TSL_CODE_DESC");
-        $this->db->from('TRAINING_SECTOR_LEVEL');
-		$this->db->where("NVL(TSL_STATUS,'N') = 'Y'");
+        $this->db->select('tsl_code TSL_CODE, tsl_code ||\' - \'|| tsl_desc "TSL_CODE_DESC"');
+        $this->db->from('ims_hris.training_sector_level');
+		$this->db->where("coalesce(tsl_status,'N') = 'Y'");
         $q = $this->db->get();
         
         return $q->result();
@@ -380,9 +379,9 @@ class Training_application_model extends MY_Model
 
     // DROPDOWN ORGANIZER LEVEL LIST
     public function getOrganizerLevel() {
-        $this->db->select("TOL_CODE, TOL_CODE ||' - '|| TOL_DESC AS TOL_CODE_DESC");
-        $this->db->from('TRAINING_ORGANIZER_LEVEL');
-        $this->db->order_by('TOL_CODE');
+        $this->db->select('tol_code TOL_CODE, tol_code ||\' - \'|| tol_desc "TOL_CODE_DESC"');
+        $this->db->from('ims_hris.training_organizer_level');
+        $this->db->order_by("TOL_CODE");
         $q = $this->db->get();
         
         return $q->result();
@@ -390,11 +389,11 @@ class Training_application_model extends MY_Model
 
     // GET ORGANIZER DETAILS
     public function getOrganizerName($organizerCode = null) {
-        $this->db->select("TOH_ORG_CODE, TOH_ORG_DESC, TOH_ORG_CODE ||' - '|| TOH_ORG_DESC AS TOH_ORG_CODE_DESC, TOH_ADDRESS, TOH_POSTCODE, TOH_CITY, SM_STATE_DESC, CM_COUNTRY_DESC");
-        $this->db->from('TRAINING_ORGANIZER_HEAD, STATE_MAIN, COUNTRY_MAIN');
-        $this->db->where("TOH_STATE=SM_STATE_CODE");
-        $this->db->where("TOH_COUNTRY=CM_COUNTRY_CODE");
-        $this->db->where("NVL(TOH_EXTERNAL_AGENCY,'N') <> 'Y'");
+        $this->db->select('toh_org_code TOH_ORG_CODE, toh_org_desc TOH_ORG_DESC, TOH_ORG_CODE ||\' - \'|| TOH_ORG_DESC "TOH_ORG_CODE_DESC", toh_address TOH_ADDRESS, toh_postcode TOH_POSTCODE, toh_city TOH_CITY, sm_state_desc SM_STATE_DESC, cm_country_desc CM_COUNTRY_DESC');
+        $this->db->from('ims_hris.training_organizer_head, ims_hris.state_main, ims_hris.country_main');
+        $this->db->where('toh_state=sm_state_code');
+        $this->db->where('toh_country=cm_country_code');
+        $this->db->where("coalesce(toh_external_agency,'N') <> 'Y'");
 
         if(!empty($organizerCode)) {
             $this->db->where("TOH_ORG_CODE", $organizerCode);
@@ -518,8 +517,8 @@ class Training_application_model extends MY_Model
         // $this->db->select("MAX(TO_NUMBER(REGEXP_REPLACE(TH_REF_ID,'\D',''))) + 1 AS TESTREFID");
         // $this->db->from('TRAINING_HEAD');
 
-        $this->db->select("to_char(sysdate,'yyyy')||'-'||ltrim(to_char(training_head_seq.nextval,'000000')) AS REF_ID");
-        $this->db->from("DUAL");
+        $this->db->select("to_char(current_date,'yyyy')||'-'||ltrim(to_char(training_head_seq.nextval,'000000')) AS REF_ID");
+        //$this->db->from("DUAL");
         $q = $this->db->get();
         
         return $q->row();
@@ -1422,21 +1421,18 @@ class Training_application_model extends MY_Model
     /*_____________________
         GET BASIC INFO
     _______________________*/
-
     // GET CURRENT DEFAULT USER DEPARTMENT - STAFF MAIN
     public function getCurUserDept($staffID = null) {
-
+        
         $curUsername = $this->username;
 
-        $this->db->select("SM_STAFF_ID, SM_STAFF_NAME, SM_DEPT_CODE, SM_EMAIL_ADDR");
-        $this->db->from("STAFF_MAIN");
-
-
+        $this->db->select("sm_staff_id AS SM_STAFF_ID, sm_staff_name AS SM_STAFF_NAME, sm_dept_code AS SM_DEPT_CODE, sm_email_addr AS SM_EMAIL_ADDR");
+        $this->db->from("ims_hris.staff_main");
 
         if(empty($staffID)) {
-            $this->db->where("SM_APPS_USERNAME", $curUsername);
+            $this->db->where("sm_apps_username", $curUsername);
         } else {
-            $this->db->where("SM_STAFF_ID", $staffID);
+            $this->db->where("sm_staff_id", $staffID);
         }
         
         $q = $this->db->get();
