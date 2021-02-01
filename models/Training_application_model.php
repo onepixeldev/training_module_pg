@@ -514,11 +514,9 @@ class Training_application_model extends MY_Model
     // GET REFID
     public function getRefID() 
     {
-        // $this->db->select("MAX(TO_NUMBER(REGEXP_REPLACE(TH_REF_ID,'\D',''))) + 1 AS TESTREFID");
-        // $this->db->from('TRAINING_HEAD');
-
-        $this->db->select("to_char(current_date,'yyyy')||'-'||ltrim(to_char(training_head_seq.nextval,'000000')) AS REF_ID");
-        //$this->db->from("DUAL");
+        // $this->db->select("to_char(current_date,'yyyy')||'-'||ltrim(to_char(training_head_seq.nextval,'000000')) AS REF_ID");
+        $this->db->select('to_char(current_date,\'yyyy\')||\'-\'||ltrim(to_char(nextval(\'training_head_seq\'),\'000000\')) AS "REF_ID"');
+        // $this->db->from("DUAL");
         $q = $this->db->get();
         
         return $q->row();
