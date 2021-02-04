@@ -1695,7 +1695,7 @@ class Training_application extends MY_Controller
             if(!empty($refid)){
                 //$refid = $data['refID']->REFID;
                 $update = $this->mdl->updateTrainingHead($form, $refid);
-
+                
                 if($update > 0 && empty($trCode)){
                     $data['trInfo'] = $this->mdl->getTrainingInfoDetail($refid);
                     $trName = $data['trInfo']->TH_TRAINING_TITLE;
