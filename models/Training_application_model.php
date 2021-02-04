@@ -14,7 +14,7 @@ class Training_application_model extends MY_Model
         $this->username = $this->lib->username();
     }
 
-    // GET ADMIN DEPT
+    // GET ADMIN DEPT -postgres
     public function getTrainingAdminDeptCode() {
 		$sID = $this->staff_id;
 		
@@ -44,24 +44,71 @@ class Training_application_model extends MY_Model
         GET BASIC INFO
     _______________________*/
 
-    // TRAINING HEAD
+    // TRAINING HEAD -postgres
     public function getTrainingInfo()
     {
         $umg = $this->username;
 
-        $this->db->select('*');
-        $this->db->from('TRAINING_HEAD');
+        $this->db->select('th_ref_id TH_REF_ID,
+        th_training_title TH_TRAINING_TITLE,
+        th_training_desc TH_TRAINING_DESC,
+        th_type TH_TYPE,
+        th_status TH_STATUS,
+        th_internal_external TH_INTERNAL_EXTERNAL,
+        th_level TH_LEVEL,
+        th_training_venue TH_TRAINING_VENUE,
+        th_training_country TH_TRAINING_COUNTRY,
+        th_organizer_name TH_ORGANIZER_NAME,
+        th_organizer_level TH_ORGANIZER_LEVEL,
+        th_organizer_address TH_ORGANIZER_ADDRESS,
+        th_organizer_postcode TH_ORGANIZER_POSTCODE,
+        th_organizer_city TH_ORGANIZER_CITY,
+        th_organizer_state TH_ORGANIZER_STATE,
+        th_organizer_country TH_ORGANIZER_COUNTRY,
+        th_sponsor TH_SPONSOR,
+        th_date_from TH_DATE_FROM,
+        th_date_to TH_DATE_TO,
+        th_total_hours TH_TOTAL_HOURS,
+        th_training_fee TH_TRAINING_FEE,
+        th_apply_closing_date TH_APPLY_CLOSING_DATE,
+        th_current_participant TH_CURRENT_PARTICIPANT,
+        th_max_participant TH_MAX_PARTICIPANT,
+        th_open TH_OPEN,
+        th_dept_code TH_DEPT_CODE,
+        th_enter_by TH_ENTER_BY,
+        th_enter_date TH_ENTER_DATE,
+        th_approve_by TH_APPROVE_BY,
+        th_approve_date TH_APPROVE_DATE,
+        th_training_state TH_TRAINING_STATE,
+        th_attendance_type TH_ATTENDANCE_TYPE,
+        th_print_certificate TH_PRINT_CERTIFICATE,
+        th_evaluation_compulsory TH_EVALUATION_COMPULSORY,
+        th_service_group TH_SERVICE_GROUP,
+        th_category TH_CATEGORY,
+        th_evaluation_date_from TH_EVALUATION_DATE_FROM,
+        th_evaluation_date_to TH_EVALUATION_DATE_TO,
+        th_training_history TH_TRAINING_HISTORY,
+        th_competency_code TH_COMPETENCY_CODE,
+        th_training_code TH_TRAINING_CODE,
+        th_offer TH_OFFER,
+        th_generate_cpd TH_GENERATE_CPD,
+        th_time_from TH_TIME_FROM,
+        th_time_to TH_TIME_TO,
+        th_confirm_date_from TH_CONFIRM_DATE_FROM,
+        th_confirm_date_to TH_CONFIRM_DATE_TO,
+        th_field TH_FIELD');
+        $this->db->from('ims_hris.training_head');
         
-        $this->db->where("TH_STATUS = 'ENTRY'");
-        $this->db->where("TH_DEPT_CODE = (SELECT SM_DEPT_CODE FROM STAFF_MAIN WHERE UPPER(SM_APPS_USERNAME) = UPPER('$umg'))");
-        $this->db->where("TH_INTERNAL_EXTERNAL NOT IN ('EXTERNAL_AGENCY')");
-        $this->db->order_by("TH_DATE_FROM, TH_DATE_TO, TH_TRAINING_TITLE, TH_REF_ID");
+        $this->db->where("th_status = 'ENTRY'");
+        $this->db->where("th_dept_code = (SELECT sm_dept_code FROM ims_hris.staff_main where UPPER(sm_apps_username) = UPPER('$umg'))");
+        $this->db->where("th_internal_external NOT IN ('EXTERNAL_AGENCY')");
+        $this->db->order_by("th_date_from, th_date_to, th_training_title, th_ref_id");
         $q = $this->db->get();
         
         return $q->result();
     }
 
-    // TRAINING HEAD 2
+    // TRAINING HEAD 2 -postgres
     public function getTrainingInfo2($deptCode)
     {
         $this->db->select('th_ref_id TH_REF_ID,
@@ -126,7 +173,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // TRAINING HEAD BASED ON REFID
+    // TRAINING HEAD BASED ON REFID -postgres
     public function getTrainingInfoDetail($refID)
     {
         $umg = $this->username;
@@ -194,7 +241,7 @@ class Training_application_model extends MY_Model
         return $q->row();
     }
 
-    // SPEAKER INFO EXTERNAL
+    // SPEAKER INFO EXTERNAL -postgres
     public function getSpeakerInfoExternal($tsrefID, $spID = null)
     {
         // $this->db->select("TRAINING_SPEAKER.ROWID AS SPRD, ts_training_refid TS_TRAINING_REFID, ts_speaker_id TS_SPEAKER_ID, ts_type TS_TYPE, ts_contact TS_CONTACT, es_speaker_name ES_SPEAKER_NAME, es_dept ES_DEPT");
@@ -216,7 +263,7 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // SPEAKER INFO STAFF
+    // SPEAKER INFO STAFF -postgres
     public function getSpeakerInfoStaff($tsrefID, $spID = null)
     {
         $this->db->select("ts_type TS_TYPE, ts_speaker_id TS_SPEAKER_ID, sm_staff_name SM_STAFF_NAME, sm_dept_code SM_DEPT_CODE, ts_contact TS_CONTACT");
@@ -237,7 +284,7 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // FACILITATOR INFO EXTERNAL
+    // FACILITATOR INFO EXTERNAL -postgres
     public function getFacilitatorInfoExternal($tsrefID, $fiID = null)
     {
         $this->db->select("tf_type TF_TYPE, ef_facilitator_name EF_FACILITATOR_NAME, tf_facilitator_id TF_FACILITATOR_ID, tf_facilitator_label TF_FACILITATOR_LABEL");
@@ -259,7 +306,7 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // FACILITATOR INFO STAFF
+    // FACILITATOR INFO STAFF -postgres
     public function getFacilitatorInfoStaff($tsrefID, $fiID = null)
     {
         $this->db->select("tf_type TF_TYPE, sm_staff_name SM_STAFF_NAME, tf_facilitator_id TF_FACILITATOR_ID, tf_facilitator_label TF_FACILITATOR_LABEL");
@@ -281,7 +328,7 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // DROPDOWN TYPE LIST
+    // DROPDOWN TYPE LIST -postgres
     public function getTypeList()
     {
         $this->db->select('tt_code as TT_CODE, tt_code ||\' - \'|| tt_desc as "TT_CODE_DESC"');
@@ -290,7 +337,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // SELECT STRUCTURED TRAINING
+    // SELECT STRUCTURED TRAINING -postgres
     public function getStructuredTraining($strTrCode = null)
     {
         $this->db->select('tth_ref_id TTH_REF_ID, tth_ref_id ||\' - \'|| tth_training_title "TTH_REF_TITLE", 
@@ -314,7 +361,7 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // DROPDOWN CATEGORY LIST
+    // DROPDOWN CATEGORY LIST -postgres
     public function getCategoryList()
     {
         $this->db->select("tc_category TC_CATEGORY");
@@ -326,7 +373,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DROPDOWN LEVEL LIST
+    // DROPDOWN LEVEL LIST -postgres
     public function getLevelList()
     {
         $this->db->select('tl_code TL_CODE, tl_code ||\' - \'|| tl_desc "TL_CODE_DESC"');
@@ -337,7 +384,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DROPDOWN AREA LIST
+    // DROPDOWN AREA LIST -postgres
     public function getAreaList()
     {
         $this->db->select('tf_code TF_CODE, tf_code ||\' - \'|| tf_field_desc "TF_CODE_DESC"');
@@ -349,7 +396,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DROPDOWN GROUP LIST
+    // DROPDOWN GROUP LIST -postgres
     public function getSgroupList()
     {
         //select SG_GROUP_CODE,SG_GROUP_DESC from service_group order by 1
@@ -361,7 +408,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DROPDOWN COUNTRY LIST
+    // DROPDOWN COUNTRY LIST -postgres
     public function getCountryList() {
         $this->db->select('cm_country_code CM_COUNTRY_CODE, cm_country_desc CM_COUNTRY_DESC');
         $this->db->from('ims_hris.country_main');
@@ -371,7 +418,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DEFAULT COUNTRY
+    // DEFAULT COUNTRY -postgres
     public function getCountryDef() {
         $this->db->select('cm_country_code CM_COUNTRY_CODE, cm_country_desc CM_COUNTRY_DESC');
         $this->db->from('ims_hris.country_main');
@@ -381,7 +428,7 @@ class Training_application_model extends MY_Model
         return $q->row();
     }
 
-    // DROPDOWN STATE LIST
+    // DROPDOWN STATE LIST -postgres
     public function getCountryStateList($countCode) {
         $this->db->select('sm_state_code SM_STATE_CODE, sm_state_desc SM_STATE_DESC, sm_country_code SM_COUNTRY_CODE');
         $this->db->from('ims_hris.state_main');
@@ -392,7 +439,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DROPDOWN COMPETENCY LEVEL LIST
+    // DROPDOWN COMPETENCY LEVEL LIST -postgres
     public function getCompetencyLevel() {
         $this->db->select('tcl_competency_code TCL_COMPETENCY_CODE, tcl_competency_code ||\' - \'|| tcl_competency_desc "TCL_COMPETENCY_CODE_DESC", tcl_service_year_from TCL_SERVICE_YEAR_FROM, tcl_service_year_to TCL_SERVICE_YEAR_TO,tcl_ordering TCL_ORDERING');
         $this->db->from('ims_hris.training_competency_level');
@@ -403,7 +450,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DROPDOWN STAFF LIST
+    // DROPDOWN STAFF LIST -postgres
     public function getCoordinator() {
         $this->db->select('sm_staff_id SM_STAFF_ID, sm_staff_id ||\' - \'|| sm_staff_name "SM_STAFF_ID_NAME"');
         $this->db->from('ims_hris.staff_main, ims_hris.staff_status');
@@ -416,7 +463,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DROPDOWN SECTOR LEVEL LIST
+    // DROPDOWN SECTOR LEVEL LIST -postgres
     public function getCoordinatorSec() {
         $this->db->select('tsl_code TSL_CODE, tsl_code ||\' - \'|| tsl_desc "TSL_CODE_DESC"');
         $this->db->from('ims_hris.training_sector_level');
@@ -426,7 +473,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // DROPDOWN ORGANIZER LEVEL LIST
+    // DROPDOWN ORGANIZER LEVEL LIST -postgres
     public function getOrganizerLevel() {
         $this->db->select('tol_code TOL_CODE, tol_code ||\' - \'|| tol_desc "TOL_CODE_DESC"');
         $this->db->from('ims_hris.training_organizer_level');
@@ -436,7 +483,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // GET ORGANIZER DETAILS
+    // GET ORGANIZER DETAILS -postgres
     public function getOrganizerName($organizerCode = null) {
         $this->db->select('toh_org_code TOH_ORG_CODE, toh_org_desc TOH_ORG_DESC, toh_org_code ||\' - \'|| toh_org_desc "TOH_ORG_CODE_DESC", toh_address TOH_ADDRESS, toh_postcode TOH_POSTCODE, toh_city TOH_CITY, sm_state_desc SM_STATE_DESC, cm_country_desc CM_COUNTRY_DESC');
         $this->db->from('ims_hris.training_organizer_head, ims_hris.state_main, ims_hris.country_main');
@@ -458,7 +505,7 @@ class Training_application_model extends MY_Model
         }  
     }
 
-    // GET TARGET GROUP LIST
+    // GET TARGET GROUP LIST -postgres
     public function getTargetGroup($tsrefID, $gpCode = null) {
         $this->db->select('ttg_training_refid TTG_TRAINING_REFID, ttg_group_code TTG_GROUP_CODE, tg_group_desc TG_GROUP_DESC, tg_scheme TG_SCHEME, tg_grade_from TG_GRADE_FROM, 
         tg_grade_to TG_GRADE_TO, tg_service_year_from TG_SERVICE_YEAR_FROM, tg_service_year_to TG_SERVICE_YEAR_TO, tg_service_group TG_SERVICE_GROUP,
@@ -498,7 +545,7 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // SELECT TRAINING HEAD DETL
+    // SELECT TRAINING HEAD DETL -postgres
     public function getmoduleSetup($tsrefID) {
         $this->db->select('thd_training_objective2 THD_TRAINING_OBJECTIVE2, thd_training_content THD_TRAINING_CONTENT, thd_module_category THD_MODULE_CATEGORY, thd_module_category ||\' - \'|| tmc_component_desc AS "TMCDESC",
         thd_evaluation THD_EVALUATION, thd_coordinator THD_COORDINATOR, thd_coordinator_telno THD_COORDINATOR_TELNO, thd_coordinator_sector THD_COORDINATOR_SECTOR');
@@ -510,7 +557,7 @@ class Training_application_model extends MY_Model
         return $q->row();
     }
 
-    // SELECT CPD HEAD
+    // SELECT CPD HEAD -postgres
     public function getCpdSetup($tsrefID) {
         $this->db->select('ch_competency CH_COMPETENCY, ch_category CH_CATEGORY, ch_mark CH_MARK, 
                            CASE WHEN ch_report_submission = \'Y\' THEN \'YES\' ELSE \'NO\' END AS "REP_SUB", 
@@ -528,17 +575,17 @@ class Training_application_model extends MY_Model
         return $q->row();
     }
 
-    // SELECT CPD CATEGORY
+    // SELECT CPD CATEGORY -postgres
     public function getCpdSetupCategory($cCode) {
-        $this->db->select("CC_CATEGORY_CODE ||' - '|| CC_CATEGORY_DESC AS CH_CC_CATEGORY_DESC");
-        $this->db->from("CPD_CATEGORY");
-        $this->db->where("CC_CATEGORY_CODE", $cCode);
+        $this->db->select('cc_category_code ||\' - \'|| cc_category_desc AS "CH_CC_CATEGORY_DESC"');
+        $this->db->from("ims_hris.cpd_category");
+        $this->db->where("cc_category_code", $cCode);
         $q = $this->db->get();
         
         return $q->row();
     }
 
-    // COUNT TARGET GROUP
+    // COUNT TARGET GROUP -postgres
     public function getCountTargetGroup($tsrefID) {
         $this->db->select('COUNT(1) AS "COUNT_TG"');
         $this->db->from("ims_hris.training_target_group");
@@ -548,18 +595,18 @@ class Training_application_model extends MY_Model
         return $q->row();
     }
 
-    // TARGET GROUP STRUCTURED TRAINING
+    // TARGET GROUP STRUCTURED TRAINING -postgres
     public function getValueStrTrTargetGroup($strRefID) {
-        $this->db->select("TTG_GROUP_CODE");
-        $this->db->from("TNA_TARGET_GROUP, TNA_GROUP");
-        $this->db->where("TTG_REF_ID", $strRefID);
-        $this->db->where("TG_GROUP_CODE = TTG_GROUP_CODE");
+        $this->db->select("ttg_group_code TTG_GROUP_CODE");
+        $this->db->from("ims_hris.tna_target_group, ims_hris.tna_group");
+        $this->db->where("ttg_ref_id", $strRefID);
+        $this->db->where("tg_group_code = ttg_group_code");
         $q = $this->db->get();
         
         return $q->result();
     }
 
-    // GET REFID
+    // GET REFID -postgres
     public function getRefID() 
     {
         // $this->db->select("to_char(current_date,'yyyy')||'-'||ltrim(to_char(training_head_seq.nextval,'000000')) AS REF_ID");
@@ -570,7 +617,7 @@ class Training_application_model extends MY_Model
         return $q->row();
     }
 
-    // GET ALL TNA_TARGET_GROUP BASED ON STRUCTURED TRAINING CODE
+    // GET ALL TNA_TARGET_GROUP BASED ON STRUCTURED TRAINING CODE -postgres
     public function getResultTTG($trCode) {
         $this->db->select("ttg_group_code TTG_GROUP_CODE");
         $this->db->from("ims_hris.tna_target_group, ims_hris.tna_group");
@@ -581,7 +628,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // GET ALL TRAINING GROUP SERVICE BASED ON STRUCTURED TRAINING CODE
+    // GET ALL TRAINING GROUP SERVICE BASED ON STRUCTURED TRAINING CODE -postgres
     public function getResultTGS($trCode) {
         $this->db->select("ttg_group_code TTG_GROUP_CODE, tgs_seq TGS_SEQ, tgs_service_code TGS_SERVICE_CODE");
         $this->db->from("ims_hris.tna_group_service, ims_hris.tna_target_group");
@@ -592,7 +639,7 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // SELECT TRAINING GROUP SERVICE 
+    // SELECT TRAINING GROUP SERVICE -postgres
     public function checkTGS($gpCode, $tgsSeq) {
         $this->db->select("tgs_grpserv_code TGS_GRPSERV_CODE, tgs_seq TGS_SEQ");
         $this->db->from("ims_hris.training_group_service");
@@ -603,28 +650,30 @@ class Training_application_model extends MY_Model
         return $q->result();
     }
 
-    // check tgs add position
+    // check tgs add position -postgres
     public function checkTGS2($gpCode, $svcCode) {
-        $this->db->select("*");
-        $this->db->from("TRAINING_GROUP_SERVICE");
-        $this->db->where("TGS_GRPSERV_CODE", $gpCode);
-        $this->db->where("TGS_SERVICE_CODE", $svcCode);
+        $this->db->select("tgs_grpserv_code TGS_GRPSERV_CODE,
+        tgs_seq TGS_SEQ,
+        tgs_service_code TGS_SERVICE_CODE");
+        $this->db->from("ims_hris.training_group_service");
+        $this->db->where("tgs_grpserv_code", $gpCode);
+        $this->db->where("tgs_service_code", $svcCode);
         $q = $this->db->get();
         
         return $q->row();
     }
 
-    // get max seq add position
+    // get max seq add position -postgres
     public function getMaxTGSSeq($gpCode) {
-        $this->db->select("(MAX(TGS_SEQ)+1) AS MAX_SEQ");
-        $this->db->from("TRAINING_GROUP_SERVICE");
-        $this->db->where("TGS_GRPSERV_CODE", $gpCode);
+        $this->db->select('(MAX(tgs_seq)::numeric+1) AS "MAX_SEQ"');
+        $this->db->from("ims_hris.training_group_service");
+        $this->db->where("tgs_grpserv_code", $gpCode);
         $q = $this->db->get();
         
         return $q->row();
     }
 
-    // SELECT TRAINING HEAD DETAIL
+    // SELECT TRAINING HEAD DETAIL -postgres
     public function getTrHeadDetl($refID) {
         $this->db->select("thd_ref_id THD_REF_ID,
         thd_training_objective1 THD_TRAINING_OBJECTIVE1,
@@ -643,21 +692,21 @@ class Training_application_model extends MY_Model
         return $q->row();
     }
 
-    // GET SPEAKER LIST AND SELECT SPEAKER
+    // GET SPEAKER LIST AND SELECT SPEAKER -postgres
     public function getSpeakerList($tpSpeaker, $trSpeakerCode = null) {
         if(empty($trSpeakerCode)) {
             if($tpSpeaker == 'STAFF') {
-                $this->db->select("SM_STAFF_ID, SM_STAFF_NAME, SM_DEPT_CODE, SM_STAFF_ID ||' - '|| SM_STAFF_NAME AS STAFF_ID_NAME");
-                $this->db->from("STAFF_MAIN, STAFF_STATUS, DEPARTMENT_MAIN");
-                $this->db->where("SS_STATUS_CODE = SM_STAFF_STATUS");
-                $this->db->where("SS_STATUS_STS = 'ACTIVE'");
-                $this->db->where("SM_DEPT_CODE = DM_DEPT_CODE");
+                $this->db->select('sm_staff_id SM_STAFF_ID, sm_staff_name SM_STAFF_NAME, sm_dept_code SM_DEPT_CODE, sm_staff_id ||\' - \'|| sm_staff_name AS "STAFF_ID_NAME"');
+                $this->db->from("ims_hris.staff_main, ims_hris.staff_status, ims_hris.department_main");
+                $this->db->where("ss_status_code = sm_staff_status");
+                $this->db->where("ss_status_sts = 'ACTIVE'");
+                $this->db->where("sm_dept_code = dm_dept_code");
                 $this->db->order_by("2,1");
             } 
             elseif($tpSpeaker == 'EXTERNAL') {
-                $this->db->select("ES_SPEAKER_ID, ES_SPEAKER_NAME, ES_DEPT, ES_TELNO_WORK, ES_SPEAKER_ID ||' - '|| ES_SPEAKER_NAME AS ES_SPEAKER_ID_NAME");
-                $this->db->from("EXTERNAL_SPEAKER");
-                $this->db->where("ES_STATUS = 'ACTIVE'");
+                $this->db->select('es_speaker_id ES_SPEAKER_ID, es_speaker_name ES_SPEAKER_NAME, es_dept ES_DEPT, es_telno_work ES_TELNO_WORK, es_speaker_id ||\' - \'|| es_speaker_name AS "ES_SPEAKER_ID_NAME"');
+                $this->db->from("ims_hris.external_speaker");
+                $this->db->where("es_status = 'ACTIVE'");
                 $this->db->order_by("2");
             }
     
@@ -666,18 +715,18 @@ class Training_application_model extends MY_Model
         } 
         elseif(!empty($trSpeakerCode)) {
             if($tpSpeaker == 'STAFF') {
-                $this->db->select("SM_STAFF_ID, SM_STAFF_NAME, SM_DEPT_CODE, SM_TELNO_WORK, SM_STAFF_ID ||' - '|| SM_STAFF_NAME AS STAFF_ID_NAME");
-                $this->db->from("STAFF_MAIN, STAFF_STATUS, DEPARTMENT_MAIN");
-                $this->db->where("SS_STATUS_CODE = SM_STAFF_STATUS");
-                $this->db->where("SS_STATUS_STS = 'ACTIVE'");
-                $this->db->where("SM_DEPT_CODE = DM_DEPT_CODE");
-                $this->db->where("SM_STAFF_ID", $trSpeakerCode);
+                $this->db->select('sm_staff_id SM_STAFF_ID, sm_staff_name SM_STAFF_NAME, sm_dept_code SM_DEPT_CODE, sm_telno_work SM_TELNO_WORK, sm_staff_id ||\' - \'|| sm_staff_name AS "STAFF_ID_NAME"');
+                $this->db->from("ims_hris.staff_main, ims_hris.staff_status, ims_hris.department_main");
+                $this->db->where("ss_status_code = sm_staff_status");
+                $this->db->where("ss_status_sts = 'ACTIVE'");
+                $this->db->where("sm_dept_code = dm_dept_code");
+                $this->db->where("sm_staff_id", $trSpeakerCode);
             } 
             elseif($tpSpeaker == 'EXTERNAL') {
-                $this->db->select("ES_SPEAKER_ID, ES_SPEAKER_NAME, ES_DEPT, ES_TELNO_WORK, ES_SPEAKER_ID ||' - '|| ES_SPEAKER_NAME AS ES_SPEAKER_ID_NAME");
-                $this->db->from("EXTERNAL_SPEAKER");
-                $this->db->where("ES_STATUS = 'ACTIVE'");
-                $this->db->where("ES_SPEAKER_ID", $trSpeakerCode);
+                $this->db->select('es_speaker_id ES_SPEAKER_ID, es_speaker_name ES_SPEAKER_NAME, es_dept ES_DEPT, es_telno_work ES_TELNO_WORK, es_speaker_id ||\' - \'|| es_speaker_name AS ES_SPEAKER_ID_NAME');
+                $this->db->from("ims_hris.external_speaker");
+                $this->db->where("es_status = 'ACTIVE'");
+                $this->db->where("es_speaker_id", $trSpeakerCode);
             }
     
             $q = $this->db->get();
@@ -685,20 +734,20 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // GET FACILITATOR LIST AND SELECT FACILITATOR
+    // GET FACILITATOR LIST AND SELECT FACILITATOR -postgres
     public function getFacilitatorList($tpFacilitator, $trSpeakerCode = null) {
 
         if(!empty($tpFacilitator)) {
             if($tpFacilitator == 'STAFF') {
-                $this->db->select("SM_STAFF_ID, SM_STAFF_NAME, SM_STAFF_ID ||' - '|| SM_STAFF_NAME AS STAFF_ID_NAME");
-                $this->db->from("STAFF_MAIN, STAFF_STATUS");
-                $this->db->where("SS_STATUS_CODE = SM_STAFF_STATUS");
-                $this->db->where("SS_STATUS_STS = 'ACTIVE'");
+                $this->db->select('sm_staff_id SM_STAFF_ID, sm_staff_name SM_STAFF_NAME, sm_staff_id ||\' - \'|| sm_staff_name AS "STAFF_ID_NAME"');
+                $this->db->from("ims_hris.staff_main, ims_hris.staff_status");
+                $this->db->where("ss_status_code = sm_staff_status");
+                $this->db->where("ss_status_sts = 'ACTIVE'");
                 $this->db->order_by("2,1");
             } 
             elseif($tpFacilitator == 'EXTERNAL') {
-                $this->db->select("EF_FACILITATOR_ID, EF_FACILITATOR_NAME, EF_FACILITATOR_ID ||' - '|| EF_FACILITATOR_NAME AS ES_FACILITATOR_ID_NAME");
-                $this->db->from("EXTERNAL_FACILITATOR");
+                $this->db->select('ef_facilitator_id EF_FACILITATOR_ID, ef_facilitator_name EF_FACILITATOR_NAME, ef_facilitator_id ||\' - \'|| ef_facilitator_name AS "ES_FACILITATOR_ID_NAME"');
+                $this->db->from("ims_hris.external_facilitator");
                 $this->db->order_by("2");
             }
     
@@ -707,103 +756,112 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // SELECT TRAINING SPEAKER
+    // SELECT TRAINING SPEAKER -postgres
     public function checkTrainingSpeaker($refID, $spID) {
-        $this->db->select("TS_TRAINING_REFID, TS_SPEAKER_ID, TS_TYPE, TS_CONTACT");
-        $this->db->from("TRAINING_SPEAKER");
-        $this->db->where("TS_SPEAKER_ID", $spID);
-        $this->db->where("TS_TRAINING_REFID", $refID);
+        $this->db->select("ts_training_refid TS_TRAINING_REFID, ts_speaker_id TS_SPEAKER_ID, ts_type TS_TYPE, ts_contact TS_CONTACT");
+        $this->db->from("ims_hris.training_speaker");
+        $this->db->where("ts_speaker_id", $spID);
+        $this->db->where("ts_training_refid", $refID);
         $q = $this->db->get();
         
         return $q->row();
     }
 
-    // SELECT TRAINING FACILITATOR
+    // SELECT TRAINING FACILITATOR -postgres
     public function checkTrainingFacilitator($refID, $fiID, $fiLabel) {
-        $this->db->select("*");
-        $this->db->from("TRAINING_FACILITATOR");
-        $this->db->where("TF_FACILITATOR_ID", $fiID);
-        $this->db->where("TF_TRAINING_REFID", $refID);
-        $this->db->where("TF_FACILITATOR_LABEL", $fiLabel);
+        $this->db->select("tf_training_refid TF_TRAINING_REFID,
+        tf_facilitator_id TF_FACILITATOR_ID,
+        tf_type TF_TYPE,
+        tf_facilitator_label TF_FACILITATOR_LABEL");
+        $this->db->from("ims_hris.training_facilitator");
+        $this->db->where("tf_facilitator_id", $fiID);
+        $this->db->where("tf_training_refid", $refID);
+        $this->db->where("tf_facilitator_label", $fiLabel);
         $q = $this->db->get();
         
         return $q->row();
     }
 
-    // SELECT TRAINING NEED ANALYSIS GROUP
+    // SELECT TRAINING NEED ANALYSIS GROUP -postgres
     public function getTargetGroupList($groupCode = null) {
 
         if(!empty($groupCode)) {
-            $this->db->select("TG_GROUP_DESC, TG_SCHEME, TG_GRADE_FROM, 
-                               TG_GRADE_TO, TG_SERVICE_YEAR_FROM, TG_SERVICE_YEAR_TO, 
-                               TG_SERVICE_GROUP,
-                               CASE TG_ACADEMIC
-                                WHEN 'Y' THEN 'YES'
-                                WHEN 'N' THEN 'NO'
+            $this->db->select('tg_group_desc TG_GROUP_DESC, tg_scheme TG_SCHEME, tg_grade_from TG_GRADE_FROM, 
+            tg_grade_to TG_GRADE_TO, tg_service_year_from TG_SERVICE_YEAR_FROM, tg_service_year_to TG_SERVICE_YEAR_TO, 
+            tg_service_group TG_SERVICE_GROUP,
+                               CASE tg_academic
+                                WHEN \'Y\' THEN \'YES\'
+                                WHEN \'N\' THEN \'NO\'
                                 END
-                               AS TGACADEMIC,
-                               CASE TG_NEW_STAFF
-                                    WHEN 'Y' THEN 'YES'
-                                    WHEN 'N' THEN 'NO'
+                               AS "TGACADEMIC",
+                               CASE tg_new_staff
+                                    WHEN \'Y\' THEN \'YES\'
+                                    WHEN \'N\' THEN \'NO\'
                                 END
-                               AS TGNEWSTAFF,
-                               CASE TG_COMPULSORY
-                                    WHEN 'Y' THEN 'YES'
-                                    WHEN 'N' THEN 'NO'
+                               AS "TGNEWSTAFF",
+                               CASE tg_compulsory
+                                    WHEN \'Y\' THEN \'YES\'
+                                    WHEN \'N\' THEN \'NO\'
                                 END
-                               AS TGCOMPULSORY,
-                               TG_ACADEMIC, TG_NEW_STAFF, TG_COMPULSORY ");
-            $this->db->from("TNA_GROUP");
-            $this->db->where("TG_GROUP_CODE", $groupCode);
+                               AS "TGCOMPULSORY",
+                               tg_academic TG_ACADEMIC, tg_new_staff TG_NEW_STAFF, tg_compulsory TG_COMPULSORY');
+            $this->db->from("ims_hris.tna_group");
+            $this->db->where("tg_group_code", $groupCode);
 
             $q = $this->db->get();
             return $q->row();
         } 
         
         if(empty($groupCode)) {
-            $this->db->select("TG_GROUP_CODE, TG_GROUP_DESC, TG_GROUP_CODE ||' - '|| TG_GROUP_DESC AS TG_GROUP_CODE_DESC, 
-                               TG_SCHEME, TG_SERVICE_GROUP, 
-                               TG_GRADE_FROM, TG_GRADE_TO, TG_ACADEMIC, TG_COMPULSORY,
-                               TG_NEW_STAFF, TG_SERVICE_YEAR_FROM, TG_SERVICE_YEAR_TO,
-                               TG_OPTION, TG_STATUS");
-            $this->db->from("TNA_GROUP");
-            $this->db->where("TG_STATUS = 'ACTIVE'");
-            $this->db->order_by("TG_GROUP_DESC");
+            $this->db->select('tg_group_code TG_GROUP_CODE, tg_group_desc TG_GROUP_DESC, tg_group_code ||\' - \'|| tg_group_desc AS "TG_GROUP_CODE_DESC", 
+            tg_scheme TG_SCHEME, tg_service_group TG_SERVICE_GROUP, 
+            tg_grade_from TG_GRADE_FROM, tg_grade_to TG_GRADE_TO, tg_academic TG_ACADEMIC, tg_compulsory TG_COMPULSORY,
+            tg_new_staff TG_NEW_STAFF, tg_service_year_from TG_SERVICE_YEAR_FROM, tg_service_year_to TG_SERVICE_YEAR_TO,
+            tg_option TG_OPTION, tg_status TG_STATUS');
+            $this->db->from("ims_hris.tna_group");
+            $this->db->where("tg_status = 'ACTIVE'");
+            $this->db->order_by("tg_group_desc");
 
             $q = $this->db->get();
             return $q->result();
         }
     }
 
-    // SELECT TRAINING TARGET GROUP BASED ON REFID & GROUP CODE
+    // SELECT TRAINING TARGET GROUP BASED ON REFID & GROUP CODE -postgres
     public function getTargetGroupDetail($refid, $gpCode) {
-        $this->db->select("*");
-        $this->db->from("TRAINING_TARGET_GROUP");
-        $this->db->where("TTG_TRAINING_REFID", $refid);
-        $this->db->where("TTG_GROUP_CODE", $gpCode);
+        $this->db->select("ttg_training_refid TTG_TRAINING_REFID,
+        ttg_group_code TTG_GROUP_CODE,
+        ttg_enter_by TTG_ENTER_BY,
+        ttg_enter_date TTG_ENTER_DATE,
+        ttg_update_by TTG_UPDATE_BY,
+        ttg_update_date TTG_UPDATE_DATE,
+        ttg_structured TTG_STRUCTURED");
+        $this->db->from("ims_hris.training_target_group");
+        $this->db->where("ttg_training_refid", $refid);
+        $this->db->where("ttg_group_code", $gpCode);
 
         $q = $this->db->get();
         return $q->row();
     }
 
-    // SELECT TRAINING TARGET GROUP BASED ON REFID
+    // SELECT TRAINING TARGET GROUP BASED ON REFID -postgres
     public function delTargetGroupVerify($gpCode) {
-        $this->db->select("1");
-        $this->db->from("TRAINING_GROUP_SERVICE");
-        $this->db->where("TGS_GRPSERV_CODE", $gpCode);
+        $this->db->select("tgs_grpserv_code TGS_GRPSERV_CODE");
+        $this->db->from("ims_hris.training_group_service");
+        $this->db->where("tgs_grpserv_code", $gpCode);
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // GET SERVICE SCHEME BASED ON GROUP CODE
+    // GET SERVICE SCHEME BASED ON GROUP CODE -postgres
     public function getListEgPosition($groupCode, $svcCode = null) {
-        $this->db->select("TGS_GRPSERV_CODE, TGS_SEQ, TGS_SERVICE_CODE, SS_SERVICE_DESC");
-        $this->db->from("TRAINING_GROUP_SERVICE");
-        $this->db->join('SERVICE_SCHEME', 'TRAINING_GROUP_SERVICE.TGS_SERVICE_CODE = SERVICE_SCHEME.SS_SERVICE_CODE', 'LEFT');
-        $this->db->where("TGS_GRPSERV_CODE", $groupCode);
+        $this->db->select("tgs_grpserv_code TGS_GRPSERV_CODE, tgs_seq TGS_SEQ, tgs_service_code TGS_SERVICE_CODE, ss_service_desc SS_SERVICE_DESC");
+        $this->db->from("ims_hris.training_group_service");
+        $this->db->join('ims_hris.service_scheme', 'ims_hris.training_group_service.tgs_service_code = ims_hris.service_scheme.ss_service_code', 'LEFT');
+        $this->db->where("tgs_grpserv_code", $groupCode);
         if(!empty($svcCode)) {
-            $this->db->where("TGS_SERVICE_CODE", $svcCode);
+            $this->db->where("tgs_service_code", $svcCode);
 
             $q = $this->db->get();
             return $q->row();
@@ -813,112 +871,113 @@ class Training_application_model extends MY_Model
         }
     }
 
-    // save insert eg position
+    // save insert eg position -postgres
     public function saveInsertEgPos($form, $gpCode) {
         $tgs_seq = "(SELECT CASE 
-        WHEN MAX_SEQ IS NULL THEN 1
-        WHEN MAX_SEQ IS NOT NULL THEN MAX_SEQ
+        WHEN max_seq IS NULL THEN 1
+        WHEN max_seq IS NOT NULL THEN max_seq
         END AS MAX_SEQ
-        FROM(SELECT (MAX(TGS_SEQ)+1) AS MAX_SEQ
-        FROM TRAINING_GROUP_SERVICE
-        WHERE TGS_GRPSERV_CODE = '$gpCode'))";
+        FROM(SELECT (MAX(tgs_seq)::NUMERIC+1) AS max_seq
+        FROM ims_hris.training_group_service
+        WHERE tgs_grpserv_code = '$gpCode') AS A)";
 
         $data = array(
-            "TGS_GRPSERV_CODE" => $gpCode,
-            "TGS_SERVICE_CODE" => $form['service']
+            "tgs_grpserv_code" => $gpCode,
+            "tgs_service_code" => $form['service']
         );
 
-        $this->db->set("TGS_SEQ", $tgs_seq, false);
+        $this->db->set("tgs_seq", $tgs_seq, false);
 
-        return $this->db->insert("TRAINING_GROUP_SERVICE", $data);
+        return $this->db->insert("ims_hris.training_group_service", $data);
     }
 
+    // -postgres
     public function getServiceList($schemeCode, $gradeTo, $svcGrp, $aca) {
 
-        $this->db->select("SS_SERVICE_CODE, SS_SERVICE_DESC, SS_SERVICE_CODE||' - '||SS_SERVICE_DESC AS SS_SERVICE_DESC");
-        $this->db->from("SERVICE_SCHEME");
+        $this->db->select('ss_service_code SS_SERVICE_CODE, ss_service_desc SS_SERVICE_DESC, ss_service_code||\' - \'||ss_service_desc AS "SS_SERVICE_DESC"');
+        $this->db->from("ims_hris.service_scheme");
         if(!empty($aca)){
-            $this->db->where("SS_ACADEMIC", $aca);
+            $this->db->where("ss_academic", $aca);
         }
 
         if(!empty($schemeCode)){
-            $this->db->where("SS_CLASS_CODE", $schemeCode);
+            $this->db->where("ss_class_code", $schemeCode);
         }
 
         if(!empty($svcGrp)){
-            $this->db->where("SS_SERVICE_GROUP", $svcGrp);
+            $this->db->where("ss_service_group", $svcGrp);
         }
-        $this->db->where("ltrim(SS_SALARY_GRADE, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') <= '$gradeTo'");
+        $this->db->where("ltrim(ss_salary_grade, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')::numeric <= '$gradeTo'");
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // GET TRAINING MODULE COMPONENT
+    // GET TRAINING MODULE COMPONENT -postgres
     public function getCompList() {
-        $this->db->select("TMC_COMPONENT_CODE, TMC_COMPONENT_CODE ||' - '|| TMC_COMPONENT_DESC TMC_CODE_DESC");
-        $this->db->from("TRAINING_MODULE_COMPONENT");
-        $this->db->order_by("TMC_COMPONENT_CODE");
+        $this->db->select('tmc_component_code TMC_COMPONENT_CODE, tmc_component_code ||\' - \'|| tmc_component_desc "TMC_CODE_DESC"');
+        $this->db->from("ims_hris.training_module_component");
+        $this->db->order_by("tmc_component_code");
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // GET CPD CATEGORY LIST
+    // GET CPD CATEGORY LIST -postgres
     public function getCpdCategoryList() {
-        $this->db->select("CC_CATEGORY_CODE, CC_CATEGORY_CODE ||' - '|| CC_CATEGORY_DESC AS CC_CODE_DESC");
-        $this->db->from("CPD_CATEGORY");
+        $this->db->select('"cc_category_code CC_CATEGORY_CODE, cc_category_code ||\' - \'|| cc_category_desc AS "CC_CODE_DESC"');
+        $this->db->from("ims_hris.cpd_category");
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // VERIFY DELETE TRAINING SPEAKER
+    // VERIFY DELETE TRAINING SPEAKER -postgres
     public function delVerifyTrSP($refid) 
     {
-        $this->db->select("1");
-        $this->db->from("TRAINING_SPEAKER T");
-        $this->db->where("T.TS_TRAINING_REFID", $refid);
+        $this->db->select("ts_training_refid TS_TRAINING_REFID");
+        $this->db->from("ims_hris.training_speaker");
+        $this->db->where("ts_training_refid", $refid);
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // VERIFY DELETE TRAINING FACILITATOR
+    // VERIFY DELETE TRAINING FACILITATOR -postgres
     public function delVerifyTrFi($refid) {
-        $this->db->select("1");
-        $this->db->from("TRAINING_FACILITATOR T");
-        $this->db->where("T.TF_TRAINING_REFID", $refid);
+        $this->db->select("tf_training_refid TF_TRAINING_REFID");
+        $this->db->from("ims_hris.training_facilitator");
+        $this->db->where("tf_training_refid", $refid);
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // VERIFY DELETE TRAINING TARGET GROUP
+    // VERIFY DELETE TRAINING TARGET GROUP -postgres
     public function delVerifyTrGrp($refid) {
-        $this->db->select("1");
-        $this->db->from("TRAINING_TARGET_GROUP T");
-        $this->db->where("T.TTG_TRAINING_REFID", $refid);
+        $this->db->select("ttg_training_refid TTG_TRAINING_REFID");
+        $this->db->from("ims_hris.training_target_group");
+        $this->db->where("ttg_training_refid", $refid);
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // VERIFY DELETE TRAINING MODULE SETUP
+    // VERIFY DELETE TRAINING MODULE SETUP -postgres
     public function delVerifyModSet($refid) {
-        $this->db->select("1");
-        $this->db->from("TRAINING_HEAD_DETL T");
-        $this->db->where("T.THD_REF_ID", $refid);
+        $this->db->select("thd_ref_id THD_REF_ID");
+        $this->db->from("ims_hris.training_head_detl");
+        $this->db->where("thd_ref_id", $refid);
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // VERIFY DELETE TRAINING CPD SETUP
+    // VERIFY DELETE TRAINING CPD SETUP -postgres
     public function delVerifyCpdSet($refid) {
-        $this->db->select("1");
-        $this->db->from("CPD_HEAD C");
-        $this->db->where("C.CH_TRAINING_REFID", $refid);
+        $this->db->select("ch_training_refid CH_TRAINING_REFID");
+        $this->db->from("ims_hris.cpd_head");
+        $this->db->where("ch_training_refid", $refid);
 
         $q = $this->db->get();
         return $q->result();
@@ -928,7 +987,7 @@ class Training_application_model extends MY_Model
         ADD PROCESS
     _______________________*/
 
-    // INSERT TRAINING HEAD
+    // INSERT TRAINING HEAD -postgres
     public function insertTrainingHead($form, $refid)
     {
         $umg = $this->staff_id;
@@ -1027,7 +1086,7 @@ class Training_application_model extends MY_Model
         return $this->db->insert("ims_hris.training_head", $data);
     }
 
-    // INSERT TRAINING TARGET GROUP
+    // INSERT TRAINING TARGET GROUP -postgres
     public function insertTrainingTargetGroup($refid, $gpCode)
     {
         $insertDate = "date_trunc('second',NOW()::timestamp)";
@@ -1045,7 +1104,7 @@ class Training_application_model extends MY_Model
         return $this->db->insert("ims_hris.training_target_group", $data);
     }
 
-    // INSERT TRAINING GROUP SERVICE
+    // INSERT TRAINING GROUP SERVICE -postgres
     public function insertTrainingGroupService($gpCode, $tgsSeq, $tgsSvcCode)
     {
         $data = array(
@@ -1057,7 +1116,7 @@ class Training_application_model extends MY_Model
         return $this->db->insert("ims_hris.training_group_service", $data);
     }
 
-    // INSERT CPD HEAD FROM INSERT TRAINING INFO
+    // INSERT CPD HEAD FROM INSERT TRAINING INFO -postgres
     public function insertCPDHead($refid, $competency)
     {
         $data = array(
@@ -1069,7 +1128,7 @@ class Training_application_model extends MY_Model
         return $this->db->insert("ims_hris.cpd_head", $data);
     }
 
-    // INSERT TRAINING HEAD DETAIL FROM INSERT TRAINING INFO
+    // INSERT TRAINING HEAD DETAIL FROM INSERT TRAINING INFO -postgres
     public function insertTrainingHeadDetl($refid, $coor, $coorSeq, $coorContact, $evaluationTHD)
     {
         $data = array(
@@ -1083,83 +1142,83 @@ class Training_application_model extends MY_Model
         return $this->db->insert("ims_hris.training_head_detl", $data);
     }
     
-    // INSERT TRAINING SPEAKER
+    // INSERT TRAINING SPEAKER -postgres
     public function insertTrainingSpeaker($form, $refid)
     {
         $data = array(
-            "TS_TRAINING_REFID" => $refid,
-            "TS_SPEAKER_ID" => $form['speaker'],
-            "TS_TYPE" => $form['type'],
-            "TS_CONTACT" => $form['contact_phone_no'],
+            "ts_training_refid" => $refid,
+            "ts_speaker_id" => $form['speaker'],
+            "ts_type" => $form['type'],
+            "ts_contact" => $form['contact_phone_no'],
         );
 
-        return $this->db->insert("TRAINING_SPEAKER", $data);
+        return $this->db->insert("ims_hris.training_speaker", $data);
     }
 
-    // INSERT TRAINING FACILITATOR
+    // INSERT TRAINING FACILITATOR -postgres
     public function insertTrainingFacilitator($form, $refid)
     {
         $data = array(
-            "TF_TRAINING_REFID" => $refid,
-            "TF_FACILITATOR_ID" => $form['facilitator'],
-            "TF_TYPE" => $form['type'],
-            "TF_FACILITATOR_LABEL" => strtoupper($form['label'])
+            "tf_training_refid" => $refid,
+            "tf_facilitator_id" => $form['facilitator'],
+            "tf_type" => $form['type'],
+            "tf_facilitator_label" => strtoupper($form['label'])
         );
 
-        return $this->db->insert("TRAINING_FACILITATOR", $data);
+        return $this->db->insert("ims_hris.training_facilitator", $data);
     }
 
-    // INSERT TRAINING TARGET GROUP
+    // INSERT TRAINING TARGET GROUP -postgres
     public function insertTrainingTG($form, $refid)
     {
         $umg = $this->staff_id;
-        $eDate = 'SYSDATE';
+        $eDate = "date_trunc('second', NOW()::timestamp)";
 
         $data = array(
-            "TTG_TRAINING_REFID" => $refid,
-            "TTG_GROUP_CODE" => $form['group_code'],
-            "TTG_ENTER_BY" => $umg,
+            "ttg_training_refid" => $refid,
+            "ttg_group_code" => $form['group_code'],
+            "ttg_enter_by" => $umg,
         );
         
         //$this->db->set("TTG_ENTER_BY", $umg, false);
-        $this->db->set("TTG_ENTER_DATE", $eDate, false);
+        $this->db->set("ttg_enter_date", $eDate, false);
 
-        return $this->db->insert("TRAINING_TARGET_GROUP", $data);
+        return $this->db->insert("ims_hris.training_target_group", $data);
     }
 
-    // INSERT TRAINING HEAD DETAIL
+    // INSERT TRAINING HEAD DETAIL -postgres
     public function insertModuleSetup($form, $refid)
     {
         $data = array(
-            "THD_REF_ID" => $refid,
-            "THD_TRAINING_OBJECTIVE2" => $form['specific_objectives'],
-            "THD_TRAINING_CONTENT" => $form['contents'],
-            "THD_MODULE_CATEGORY" => $form['component_category'],
+            "thd_ref_id" => $refid,
+            "thd_training_objective2" => $form['specific_objectives'],
+            "thd_training_content" => $form['contents'],
+            "thd_module_category" => $form['component_category'],
         );
 
-        return $this->db->insert("TRAINING_HEAD_DETL", $data);
+        return $this->db->insert("ims_hris.training_head_detl", $data);
     }
 
-    // INSERT TRAINING HEAD
+    // INSERT TRAINING HEAD -postgres
     public function insertCpdSetup($form, $refid)
     {
         $data = array(
-            "CH_TRAINING_REFID" => $refid,
-            "CH_COMPETENCY" => $form['competency'],
-            "CH_CATEGORY" => $form['category'],
-            "CH_MARK" => $form['mark'],
-            "CH_REPORT_SUBMISSION" => $form['report_submission'],
-            "CH_COMPULSORY" => $form['compulsory']
+            "ch_training_refid" => $refid,
+            "ch_competency" => $form['competency'],
+            "ch_category" => $form['category'],
+            "ch_mark" => $form['mark'],
+            "ch_report_submission" => $form['report_submission'],
+            "ch_compulsory" => $form['compulsory']
         );
 
-        return $this->db->insert("CPD_HEAD", $data);
+        return $this->db->insert("ims_hris.cpd_head", $data);
     }
 
     /*_____________________
         UPDATE PROCESS
     _______________________*/
     
-    // UPDATE TRAINING HEAD
+    // UPDATE TRAINING HEAD -postgres
     public function updateTrainingHead($form, $refid)
     {
         $umg = $this->staff_id;
@@ -1278,7 +1337,7 @@ class Training_application_model extends MY_Model
         return $this->db->update('ims_hris.training_head', $data);
     }
 
-    // UPDATE CPD HEAD FROM TRAINING INFO FORM
+    // UPDATE CPD HEAD FROM TRAINING INFO FORM -postgres
     public function updateCPDHead($refid, $competency)
     {
         $data = array(
@@ -1292,7 +1351,7 @@ class Training_application_model extends MY_Model
         return $this->db->update("ims_hris.cpd_head", $data);
     }
 
-    // UPDATE TRAINING HEAD DETAIL
+    // UPDATE TRAINING HEAD DETAIL -postgres
     public function updateTrainingHeadDetl($refid, $coor, $coorSeq, $coorContact, $evaluationTHD)
     {
         $data = array(
@@ -1308,163 +1367,163 @@ class Training_application_model extends MY_Model
         return $this->db->update("ims_hris.training_head_detl", $data);
     }
 
-    // UPDATE TRAINING SPEAKER
+    // UPDATE TRAINING SPEAKER -postgres
     public function updateTrainingSpeaker($form, $refid, $spID)
     {
         $data = array(
-            "TS_CONTACT" => $form['contact_phone_no']
+            "ts_contact" => $form['contact_phone_no']
         );
 
-        $this->db->where("TS_TRAINING_REFID", $refid);
-        $this->db->where("TS_SPEAKER_ID", $spID);
+        $this->db->where("ts_training_refid", $refid);
+        $this->db->where("ts_speaker_id", $spID);
 
-        return $this->db->update("TRAINING_SPEAKER", $data);
+        return $this->db->update("ims_hris.training_speaker", $data);
     }
 
-    // UPDATE TRAINING HEAD DETAIL 1
+    // UPDATE TRAINING HEAD DETAIL 1 -postgres
     public function updateMs1($form, $refid)
     {
         $data = array(
-            "THD_TRAINING_OBJECTIVE2" => $form['specific_objectives']
+            "thd_training_objective2" => $form['specific_objectives']
         );
 
-        $this->db->where("THD_REF_ID", $refid);
+        $this->db->where("thd_ref_id", $refid);
 
-        return $this->db->update("TRAINING_HEAD_DETL", $data);
+        return $this->db->update("ims_hris.training_head_detl", $data);
     }
 
-    // UPDATE TRAINING HEAD DETAIL 2
+    // UPDATE TRAINING HEAD DETAIL 2 -postgres
     public function updateMs2($form, $refid)
     {
         $data = array(
-            "THD_TRAINING_CONTENT" => $form['contents']
+            "thd_training_content" => $form['contents']
         );
 
-        $this->db->where("THD_REF_ID", $refid);
+        $this->db->where("thd_ref_id", $refid);
 
-        return $this->db->update("TRAINING_HEAD_DETL", $data);
+        return $this->db->update("ims_hris.training_head_detl", $data);
     }
 
-    // UPDATE TRAINING HEAD DETAIL 3
+    // UPDATE TRAINING HEAD DETAIL 3 -postgres
     public function updateMs3($form, $refid)
     {
         $data = array(
-            "THD_MODULE_CATEGORY" => $form['component_category']
+            "thd_module_category" => $form['component_category']
         );
 
-        $this->db->where("THD_REF_ID", $refid);
+        $this->db->where("thd_ref_id", $refid);
 
-        return $this->db->update("TRAINING_HEAD_DETL", $data);
+        return $this->db->update("ims_hris.training_head_detl", $data);
     }
 
-    // UPDATE CPD HEAD 1
+    // UPDATE CPD HEAD 1 -postgres
     public function updateCpd1($form, $refid)
     {
         $data = array(
-            "CH_COMPETENCY" => $form['competency']
+            "ch_competency" => $form['competency']
         );
 
-        $this->db->where("CH_TRAINING_REFID", $refid);
+        $this->db->where("ch_training_refid", $refid);
 
-        return $this->db->update("CPD_HEAD", $data);
+        return $this->db->update("ims_hris.cpd_head", $data);
     }
 
-    // UPDATE CPD HEAD 2
+    // UPDATE CPD HEAD 2 -postgres
     public function updateCpd2($form, $refid)
     {
         $data = array(
-            "CH_CATEGORY" => $form['category']
+            "ch_category" => $form['category']
         );
 
-        $this->db->where("CH_TRAINING_REFID", $refid);
+        $this->db->where("ch_training_refid", $refid);
 
-        return $this->db->update("CPD_HEAD", $data);
+        return $this->db->update("ims_hris.cpd_head", $data);
     }
 
-    // UPDATE CPD HEAD 3
+    // UPDATE CPD HEAD 3 -postgres
     public function updateCpd3($form, $refid)
     {
         $data = array(
-            "CH_MARK" => $form['mark']
+            "ch_mark" => $form['mark']
         );
 
-        $this->db->where("CH_TRAINING_REFID", $refid);
+        $this->db->where("ch_training_refid", $refid);
 
-        return $this->db->update("CPD_HEAD", $data);
+        return $this->db->update("ims_hris.cpd_head", $data);
     }
 
-    // UPDATE CPD HEAD 4
+    // UPDATE CPD HEAD 4 -postgres
     public function updateCpd4($form, $refid)
     {
         $data = array(
-            "CH_REPORT_SUBMISSION" => $form['report_submission']
+            "ch_report_submission" => $form['report_submission']
         );
 
-        $this->db->where("CH_TRAINING_REFID", $refid);
+        $this->db->where("ch_training_refid", $refid);
 
-        return $this->db->update("CPD_HEAD", $data);
+        return $this->db->update("ims_hris.cpd_head", $data);
     }
 
-    // UPDATE CPD HEAD 5
+    // UPDATE CPD HEAD 5 -postgres
     public function updateCpd5($form, $refid)
     {
         $data = array(
-            "CH_COMPULSORY" => $form['compulsory']
+            "ch_compulsory" => $form['compulsory']
         );
 
-        $this->db->where("CH_TRAINING_REFID", $refid);
+        $this->db->where("ch_training_refid", $refid);
 
-        return $this->db->update("CPD_HEAD", $data);
+        return $this->db->update("ims_hris.cpd_head", $data);
     }
 
     /*_____________________
         DELETE PROCESS
     _______________________*/
 
-    // DELETE TRAINING HEAD
+    // DELETE TRAINING HEAD -postgres
     public function delTrainingInfo($refid) {
-        $this->db->where('TH_REF_ID', $refid);
-        return $this->db->delete('TRAINING_HEAD');
+        $this->db->where('th_ref_id', $refid);
+        return $this->db->delete('ims_hris.training_head');
     }
 
-    // DELETE TRAINING SPEAKER
+    // DELETE TRAINING SPEAKER -postgres
     public function delTrainingSpeaker($refid, $spID) {
-        $this->db->where('TS_TRAINING_REFID', $refid);
-        $this->db->where('TS_SPEAKER_ID', $spID);
-        return $this->db->delete('TRAINING_SPEAKER');
+        $this->db->where('ts_training_refid', $refid);
+        $this->db->where('ts_speaker_id', $spID);
+        return $this->db->delete('ims_hris.training_speaker');
     }
 
-    // DELETE TRAINING FACILITATOR
+    // DELETE TRAINING FACILITATOR -postgres
     public function delTrainingFacilitator($refid, $fiID) {
-        $this->db->where('TF_TRAINING_REFID', $refid);
-        $this->db->where('TF_FACILITATOR_ID', $fiID);
-        return $this->db->delete('TRAINING_FACILITATOR');
+        $this->db->where('tf_training_refid', $refid);
+        $this->db->where('tf_facilitator_id', $fiID);
+        return $this->db->delete('ims_hris.training_facilitator');
     }
 
-    // DELETE TRAINING TARGET GROUP
+    // DELETE TRAINING TARGET GROUP -postgres
     public function delTargetGroup($refid, $gpCode) {
-        $this->db->where('TTG_TRAINING_REFID', $refid);
-        $this->db->where('TTG_GROUP_CODE', $gpCode);
-        return $this->db->delete('TRAINING_TARGET_GROUP');
+        $this->db->where('ttg_training_refid', $refid);
+        $this->db->where('ttg_group_code', $gpCode);
+        return $this->db->delete('ims_hris.training_target_group');
     }
 
-    // DELETE TRAINING HEAD DETAIL
+    // DELETE TRAINING HEAD DETAIL -postgres
     public function delModuleSetup($refid) {
-        $this->db->where('THD_REF_ID', $refid);
-        return $this->db->delete('TRAINING_HEAD_DETL');
+        $this->db->where('thd_ref_id', $refid);
+        return $this->db->delete('ims_hris.training_head_detl');
     }
 
-    // DELETE CPD HEAD
+    // DELETE CPD HEAD -postgres
     public function delCpdSetup($refid) {
-        $this->db->where('CH_TRAINING_REFID', $refid);
-        return $this->db->delete('CPD_HEAD');
+        $this->db->where('ch_training_refid', $refid);
+        return $this->db->delete('ims_hris.cpd_head');
     }
 
-    // DELETE TRAINING GROUP SERVICE
+    // DELETE TRAINING GROUP SERVICE -postgres
     public function delTrainingGpService($gpCode, $tgsSeq) {
-        $this->db->where('TGS_GRPSERV_CODE', $gpCode);
-        $this->db->where('TGS_SEQ', $tgsSeq);
-        return $this->db->delete('TRAINING_GROUP_SERVICE');
+        $this->db->where('tgs_grpserv_code', $gpCode);
+        $this->db->where('tgs_seq', $tgsSeq);
+        return $this->db->delete('ims_hris.training_group_service');
     }
 
 
@@ -1476,7 +1535,7 @@ class Training_application_model extends MY_Model
     /*_____________________
         GET BASIC INFO
     _______________________*/
-    // GET CURRENT DEFAULT USER DEPARTMENT - STAFF MAIN
+    // GET CURRENT DEFAULT USER DEPARTMENT - STAFF MAIN -postgres
     public function getCurUserDept($staffID = null) {
         
         $curUsername = $this->username;
@@ -1494,258 +1553,258 @@ class Training_application_model extends MY_Model
         return $q->row();
     }
 
-    // GET CURRENT DEFAULT YEAR
+    // GET CURRENT DEFAULT YEAR -postgres
     public function getCurYear() {
-        $this->db->select("to_char(SYSDATE, 'YYYY') AS CUR_YEAR");
+        $this->db->select('to_char(CURRENT_DATE, \'YYYY\') AS "CUR_YEAR"');
         
-        $this->db->from("DUAL");
+        // $this->db->from("DUAL");
         
         $q = $this->db->get();
         return $q->row();
     }
 
-    // GET TRAINING DATE FROM
+    // GET TRAINING DATE FROM -postgres
     public function getTrainingDateFrom($refID)
     {
-        $this->db->select("to_char(SYSDATE, 'YYYYMMDD') AS CUR_DATE, to_char(TH_DATE_FROM, 'YYYYMMDD') AS TH_DATE_FROM,
-                            to_char(TH_DATE_TO, 'YYYYMMDD') AS TH_DATE_TO_FULL, to_char(TH_DATE_TO, 'YYYY') AS TH_DATE_TO_YEAR");
-        $this->db->from('TRAINING_HEAD');
-        $this->db->where("TH_REF_ID", $refID);
+        $this->db->select('to_char(CURRENT_DATE, \'YYYYMMDD\') AS "CUR_DATE", to_char(th_date_from, \'YYYYMMDD\') AS "TH_DATE_FROM",
+        to_char(th_date_to, \'YYYYMMDD\') AS "TH_DATE_TO_FULL", to_char(th_date_to, \'YYYY\') AS "TH_DATE_TO_YEAR"');
+        $this->db->from('ims_hris.training_head');
+        $this->db->where("th_ref_id", $refID);
         $q = $this->db->get();
         
         return $q->row();
     }
 
-    // GET TRAINING HEAD BASED ON FILTER
+    // GET TRAINING HEAD BASED ON FILTER -postgres
     public function getTrainingList($defIntExt = null, $curUsrDept = null, $defMonth = null, $curYear = null, $defTrSts = null, $evaluation = null, $screRpt = null)
     {
         if($screRpt == '1') {
-            $this->db->select("TH_REF_ID, 
-                                TH_TRAINING_TITLE, 
-                                TH_TRAINING_DESC, 
-                                TH_TYPE, 
-                                TH_STATUS, 
-                                TH_INTERNAL_EXTERNAL,
-                                TH_LEVEL, 
-                                TH_TRAINING_VENUE, 
-                                TH_TRAINING_COUNTRY, 
-                                TH_ORGANIZER_NAME, 
-                                TH_ORGANIZER_LEVEL, 
-                                TH_ORGANIZER_ADDRESS,
-                                TH_ORGANIZER_POSTCODE, 
-                                TH_ORGANIZER_CITY, 
-                                TH_ORGANIZER_STATE, 
-                                TH_ORGANIZER_COUNTRY, 
-                                TH_SPONSOR, 
-                                to_char(TH_DATE_FROM, 'DD/MM/YYYY') AS TH_DATE_FROM,
-                                to_char(TH_DATE_TO, 'DD/MM/YYYY') AS TH_DATE_TO, 
-                                TH_TOTAL_HOURS, 
-                                TH_TRAINING_FEE, 
-                                to_char(TH_APPLY_CLOSING_DATE, 'DD-MM-YYYY') AS TH_APP_CLOSING_DATE, 
-                                TH_CURRENT_PARTICIPANT, 
-                                TH_MAX_PARTICIPANT,
-                                TH_OPEN, 
-                                TH_DEPT_CODE, 
-                                TH_ENTER_BY, 
-                                TH_ENTER_DATE, 
-                                TH_APPROVE_BY, 
-                                TH_APPROVE_DATE, 
-                                TH_TRAINING_STATE, 
-                                TH_ATTENDANCE_TYPE,
-                                TH_PRINT_CERTIFICATE, 
-                                TH_EVALUATION_COMPULSORY, 
-                                TH_SERVICE_GROUP, 
-                                TH_CATEGORY, 
-                                to_char(TH_EVALUATION_DATE_FROM, 'DD-MM-YYYY') AS TH_EVA_DATE_FROM,
-                                to_char(TH_EVALUATION_DATE_TO, 'DD-MM-YYYY') AS TH_EVA_DATE_TO, 
-                                TH_TRAINING_HISTORY, 
-                                TH_COMPETENCY_CODE, 
-                                TH_TRAINING_CODE, 
-                                TH_OFFER, 
-                                TH_GENERATE_CPD,
-                                to_char(TH_TIME_FROM, 'HH:MI AM') AS TIME_FR, 
-                                to_char(TH_TIME_TO, 'HH:MI AM') AS TIME_T, 
-                                to_char(TH_CONFIRM_DATE_FROM, 'DD-MM-YYYY') AS TH_CON_DATE_FROM,
-                                to_char(TH_CONFIRM_DATE_TO, 'DD-MM-YYYY') AS TH_CON_DATE_TO, 
-                                TH_FIELD,
-                                TSR_REFID
-                            ");
-            $this->db->from('TRAINING_HEAD');
-            $this->db->join("TRAINING_SECRETARIAT_REPORT","TH_REF_ID = TSR_REFID","LEFT");
+            $this->db->select('th_ref_id TH_REF_ID, 
+                                th_training_title TH_TRAINING_TITLE, 
+                                th_training_desc TH_TRAINING_DESC, 
+                                th_type TH_TYPE, 
+                                th_status TH_STATUS, 
+                                th_internal_external TH_INTERNAL_EXTERNAL,
+                                th_level TH_LEVEL, 
+                                th_training_venue TH_TRAINING_VENUE, 
+                                th_training_country TH_TRAINING_COUNTRY, 
+                                th_organizer_name TH_ORGANIZER_NAME, 
+                                th_organizer_level TH_ORGANIZER_LEVEL, 
+                                th_organizer_address TH_ORGANIZER_ADDRESS,
+                                th_organizer_postcode TH_ORGANIZER_POSTCODE, 
+                                th_organizer_city TH_ORGANIZER_CITY, 
+                                th_organizer_state TH_ORGANIZER_STATE, 
+                                th_organizer_country TH_ORGANIZER_COUNTRY, 
+                                th_sponsor TH_SPONSOR, 
+                                to_char(th_date_from, \'DD/MM/YYYY\') AS "TH_DATE_FROM",
+                                to_char(th_date_to, \'DD/MM/YYYY\') AS "TH_DATE_TO", 
+                                th_total_hours TH_TOTAL_HOURS, 
+                                th_training_fee TH_TRAINING_FEE, 
+                                to_char(th_apply_closing_date, \'DD-MM-YYYY\') AS "TH_APP_CLOSING_DATE", 
+                                th_current_participant TH_CURRENT_PARTICIPANT, 
+                                th_max_participant TH_MAX_PARTICIPANT,
+                                th_open TH_OPEN, 
+                                th_dept_code TH_DEPT_CODE, 
+                                th_enter_by TH_ENTER_BY, 
+                                th_enter_date TH_ENTER_DATE, 
+                                th_approve_by TH_APPROVE_BY, 
+                                th_approve_date TH_APPROVE_DATE, 
+                                th_training_state TH_TRAINING_STATE, 
+                                th_attendance_type TH_ATTENDANCE_TYPE,
+                                th_print_certificate TH_PRINT_CERTIFICATE, 
+                                th_evaluation_compulsory TH_EVALUATION_COMPULSORY, 
+                                th_service_group TH_SERVICE_GROUP, 
+                                th_category TH_CATEGORY, 
+                                to_char(th_evaluation_date_from, \'DD-MM-YYYY\') AS "TH_EVA_DATE_FROM",
+                                to_char(th_evaluation_date_to, \'DD-MM-YYYY\') AS "TH_EVA_DATE_TO", 
+                                th_training_history TH_TRAINING_HISTORY, 
+                                th_competency_code TH_COMPETENCY_CODE, 
+                                th_training_code TH_TRAINING_CODE, 
+                                th_offer TH_OFFER, 
+                                th_generate_cpd TH_GENERATE_CPD,
+                                to_char(th_time_from, \'HH:MI AM\') AS "TIME_FR", 
+                                to_char(th_time_to, \'HH:MI AM\') AS "TIME_T", 
+                                to_char(th_confirm_date_from, \'DD-MM-YYYY\') AS "TH_CON_DATE_FROM",
+                                to_char(th_confirm_date_to, \'DD-MM-YYYY\') AS "TH_CON_DATE_TO", 
+                                th_field TH_FIELD,
+                                tsr_refid TSR_REFID
+                            ');
+            $this->db->from('ims_hris.training_head');
+            $this->db->join("ims_hris.training_secretariat_report","th_ref_id = tsr_refid","LEFT");
         } else {
-            $this->db->select("TH_REF_ID, 
-                                TH_TRAINING_TITLE, 
-                                TH_TRAINING_DESC, 
-                                TH_TYPE, 
-                                TH_STATUS, 
-                                TH_INTERNAL_EXTERNAL,
-                                TH_LEVEL, 
-                                TH_TRAINING_VENUE, 
-                                TH_TRAINING_COUNTRY, 
-                                TH_ORGANIZER_NAME, 
-                                TH_ORGANIZER_LEVEL, 
-                                TH_ORGANIZER_ADDRESS,
-                                TH_ORGANIZER_POSTCODE, 
-                                TH_ORGANIZER_CITY, 
-                                TH_ORGANIZER_STATE, 
-                                TH_ORGANIZER_COUNTRY, 
-                                TH_SPONSOR, 
-                                to_char(TH_DATE_FROM, 'DD/MM/YYYY') AS TH_DATE_FROM,
-                                to_char(TH_DATE_TO, 'DD/MM/YYYY') AS TH_DATE_TO, 
-                                TH_TOTAL_HOURS, 
-                                TH_TRAINING_FEE, 
-                                to_char(TH_APPLY_CLOSING_DATE, 'DD-MM-YYYY') AS TH_APP_CLOSING_DATE, 
-                                TH_CURRENT_PARTICIPANT, 
-                                TH_MAX_PARTICIPANT,
-                                TH_OPEN, 
-                                TH_DEPT_CODE, 
-                                TH_ENTER_BY, 
-                                TH_ENTER_DATE, 
-                                TH_APPROVE_BY, 
-                                TH_APPROVE_DATE, 
-                                TH_TRAINING_STATE, 
-                                TH_ATTENDANCE_TYPE,
-                                TH_PRINT_CERTIFICATE, 
-                                TH_EVALUATION_COMPULSORY, 
-                                TH_SERVICE_GROUP, 
-                                TH_CATEGORY, 
-                                to_char(TH_EVALUATION_DATE_FROM, 'DD-MM-YYYY') AS TH_EVA_DATE_FROM,
-                                to_char(TH_EVALUATION_DATE_TO, 'DD-MM-YYYY') AS TH_EVA_DATE_TO, 
-                                TH_TRAINING_HISTORY, 
-                                TH_COMPETENCY_CODE, 
-                                TH_TRAINING_CODE, 
-                                TH_OFFER, 
-                                TH_GENERATE_CPD,
-                                to_char(TH_TIME_FROM, 'HH:MI AM') AS TIME_FR, 
-                                to_char(TH_TIME_TO, 'HH:MI AM') AS TIME_T, 
-                                to_char(TH_CONFIRM_DATE_FROM, 'DD-MM-YYYY') AS TH_CON_DATE_FROM,
-                                to_char(TH_CONFIRM_DATE_TO, 'DD-MM-YYYY') AS TH_CON_DATE_TO, 
-                                TH_FIELD,
-                            ");
-            $this->db->from('TRAINING_HEAD');
+            $this->db->select('th_ref_id TH_REF_ID, 
+                                th_training_title TH_TRAINING_TITLE, 
+                                th_training_desc TH_TRAINING_DESC, 
+                                th_type TH_TYPE, 
+                                th_status TH_STATUS, 
+                                th_internal_external TH_INTERNAL_EXTERNAL,
+                                th_level TH_LEVEL, 
+                                th_training_venue TH_TRAINING_VENUE, 
+                                th_training_country TH_TRAINING_COUNTRY, 
+                                th_organizer_name TH_ORGANIZER_NAME, 
+                                th_organizer_level TH_ORGANIZER_LEVEL, 
+                                th_organizer_address TH_ORGANIZER_ADDRESS,
+                                th_organizer_postcode TH_ORGANIZER_POSTCODE, 
+                                th_organizer_city TH_ORGANIZER_CITY, 
+                                th_organizer_state TH_ORGANIZER_STATE, 
+                                th_organizer_country TH_ORGANIZER_COUNTRY, 
+                                th_sponsor TH_SPONSOR,
+                                to_char(th_date_from, \'DD/MM/YYYY\') AS "TH_DATE_FROM",
+                                to_char(th_date_to, \'DD/MM/YYYY\') AS "TH_DATE_TO", 
+                                th_total_hours TH_TOTAL_HOURS, 
+                                th_training_fee TH_TRAINING_FEE, 
+                                to_char(th_apply_closing_date, \'DD-MM-YYYY\') AS "TH_APP_CLOSING_DATE",
+                                th_current_participant TH_CURRENT_PARTICIPANT, 
+                                th_max_participant TH_MAX_PARTICIPANT,
+                                th_open TH_OPEN, 
+                                th_dept_code TH_DEPT_CODE, 
+                                th_enter_by TH_ENTER_BY, 
+                                th_enter_date TH_ENTER_DATE, 
+                                th_approve_by TH_APPROVE_BY, 
+                                th_approve_date TH_APPROVE_DATE, 
+                                th_training_state TH_TRAINING_STATE, 
+                                th_attendance_type TH_ATTENDANCE_TYPE,
+                                th_print_certificate TH_PRINT_CERTIFICATE, 
+                                th_evaluation_compulsory TH_EVALUATION_COMPULSORY, 
+                                th_service_group TH_SERVICE_GROUP, 
+                                th_category TH_CATEGORY,
+                                to_char(th_evaluation_date_from, \'DD-MM-YYYY\') AS "TH_EVA_DATE_FROM",
+                                to_char(th_evaluation_date_to, \'DD-MM-YYYY\') AS "TH_EVA_DATE_TO",
+                                th_training_history TH_TRAINING_HISTORY, 
+                                th_competency_code TH_COMPETENCY_CODE, 
+                                th_training_code TH_TRAINING_CODE, 
+                                th_offer TH_OFFER, 
+                                th_generate_cpd TH_GENERATE_CPD, 
+                                to_char(th_time_from, \'HH:MI AM\') AS "TIME_FR", 
+                                to_char(th_time_to, \'HH:MI AM\') AS "TIME_T",
+                                to_char(th_confirm_date_from, \'DD-MM-YYYY\') AS "TH_CON_DATE_FROM",
+                                to_char(th_confirm_date_to, \'DD-MM-YYYY\') AS "TH_CON_DATE_TO", 
+                                th_field TH_FIELD
+                            ');
+            $this->db->from('ims_hris.training_head');
         }
 
         if(!empty($curUsrDept)) {
-            $this->db->where("TH_DEPT_CODE = '$curUsrDept'");
+            $this->db->where("th_dept_code = '$curUsrDept'");
         }
 
         if(!empty($defMonth) && !empty($curYear)) {
-            $this->db->where("((NVL(to_char(TH_DATE_FROM,'MM/YYYY'),'') = '$defMonth'||'/'||'$curYear'))");
+            $this->db->where("((coalesce(to_char(th_date_from,'MM/YYYY'),'') = '$defMonth'||'/'||'$curYear'))");
         } elseif(!empty($defMonth)) {
-            $this->db->where("((NVL(to_char(TH_DATE_FROM,'MM'),'') = '$defMonth'))");
+            $this->db->where("((coalesce(to_char(th_date_from,'MM'),'') = '$defMonth'))");
         } elseif(!empty($curYear)) {
-            $this->db->where("((NVL(to_char(TH_DATE_FROM,'YYYY'),'') = '$curYear'))");
+            $this->db->where("((coalesce(to_char(th_date_from,'YYYY'),'') = '$curYear'))");
         }
         
         if($defIntExt == 'INTERNAL' || $defIntExt == 'EXTERNAL' || $defIntExt == 'EXTERNAL_AGENCY' ) {
-            $this->db->where("TH_INTERNAL_EXTERNAL", $defIntExt);
+            $this->db->where("th_internal_external", $defIntExt);
         } elseif($defIntExt == '1') {
-            $this->db->where("TH_INTERNAL_EXTERNAL NOT IN ('EXTERNAL_AGENCY')");
+            $this->db->where("th_internal_external NOT IN ('EXTERNAL_AGENCY')");
         }
 
         if($defTrSts == 'POSTPONE' || $defTrSts == 'REJECT' || $defTrSts == 'APPROVE' || $defTrSts == 'ENTRY') {
-            $this->db->where("TH_STATUS", $defTrSts);
+            $this->db->where("th_status", $defTrSts);
         } elseif(empty($defTrSts)) {
-            $this->db->where("NVL(TH_STATUS,'ENTRY') = 'APPROVE'");
+            $this->db->where("coalesce(th_status,'ENTRY') = 'APPROVE'");
         }
         
         if($evaluation == '1') {
-            $this->db->where("TH_REF_ID IN (SELECT THD_REF_ID
-                                FROM TRAINING_HEAD_DETL
-                                WHERE NVL(THD_EVALUATION,'N') = 'Y')");
+            $this->db->where("th_ref_id IN (SELECT thd_ref_id
+                                FROM ims_hris.training_head_detl
+                                WHERE coalesce(thd_evaluation,'N') = 'Y')");
         }
 
         if($screRpt == '1') {
-            $this->db->where("to_char(to_date(TH_DATE_FROM, 'DD/MM/YYYY'), 'YYYYMMDD') < to_char(to_date(SYSDATE, 'DD/MM/YYYY'), 'YYYYMMDD')");
-            $this->db->where("TH_ORGANIZER_NAME = 'ULAT'");
+            $this->db->where("to_char(to_date(th_date_from, 'DD/MM/YYYY'), 'YYYYMMDD')::numeric < to_char(to_date(current_date, 'DD/MM/YYYY'), 'YYYYMMDD')::numeric");
+            $this->db->where("th_organizer_name = 'ULAT'");
         }
         
-        $this->db->order_by("TH_DATE_FROM, TH_DATE_TO, TH_TRAINING_TITLE");
+        $this->db->order_by("th_date_from, th_date_to, th_training_title");
 
         $q = $this->db->get();
         return $q->result();
     }
 
-    // GET TRAINING DETAIL
+    // GET TRAINING DETAIL -postgres
     public function getTrDetl($refid)
     {
-        $this->db->select("TH_REF_ID, 
-                            TH_TRAINING_TITLE,
-                            TH_TRAINING_VENUE,
-                            to_char(TH_DATE_FROM, 'DD/MM/YYYY') AS TH_DATEFR,
-                            to_char(TH_DATE_TO, 'DD/MM/YYYY') AS TH_DATETO,  
-                            to_char(TH_TIME_FROM, 'HH:MI AM') AS TIME_FR, 
-                            to_char(TH_TIME_TO, 'HH:MI AM') AS TIME_T, 
-                            to_char(TH_CONFIRM_DATE_TO, 'DD/MM/YYYY') AS TH_CON_DATE_TO");
-        $this->db->from('TRAINING_HEAD');
-        $this->db->where("TH_REF_ID", $refid);
-        $this->db->where("TH_STATUS= 'APPROVE'");
+        $this->db->select('th_ref_id TH_REF_ID, 
+                            th_training_title TH_TRAINING_TITLE,
+                            th_training_venue TH_TRAINING_VENUE,
+                            to_char(th_date_from, \'DD/MM/YYYY\') AS "TH_DATEFR",
+                            to_char(th_date_to, \'DD/MM/YYYY\') AS "TH_DATETO",  
+                            to_char(th_time_from, \'HH:MI AM\') AS "TIME_FR", 
+                            to_char(th_time_to, \'HH:MI AM\') AS "TIME_T", 
+                            to_char(th_confirm_date_to, \'DD/MM/YYYY\') AS "TH_CON_DATE_TO"');
+        $this->db->from('ims_hris.training_head');
+        $this->db->where("th_ref_id", $refid);
+        $this->db->where("th_status = 'APPROVE'");
 
         $q = $this->db->get();
         return $q->row();
     }
 
-    // GET DEPARTMENT LIST
+    // GET DEPARTMENT LIST -postgres
     public function getDeptList() {
-        $this->db->select("DM_DEPT_CODE, DM_DEPT_DESC, DM_DEPT_CODE ||' - '|| DM_DEPT_DESC AS DEPT_CODE_DESC");
-        $this->db->from('DEPARTMENT_MAIN');
-		$this->db->where('NVL(DM_STATUS,\'INACTIVE\')', 'ACTIVE');
-		$this->db->where('DM_LEVEL <= 2');
-        $this->db->order_by('DM_DEPT_CODE');
+        $this->db->select('dm_dept_code DM_DEPT_CODE, dm_dept_desc DM_DEPT_DESC, dm_dept_code ||\' - \'|| dm_dept_desc AS "DEPT_CODE_DESC"');
+        $this->db->from('ims_hris.department_main');
+		$this->db->where('coalesce(dm_status,\'INACTIVE\')', 'ACTIVE');
+		$this->db->where('DM_LEVEL:numeric <= 2');
+        $this->db->order_by('dm_dept_code');
         $q = $this->db->get();
 		        
         return $q->result();
     }
 
-    // POPULATE DEPARTMENT LIST
+    // POPULATE DEPARTMENT LIST -postgres
     public function populateDept($deptCode) {
-        $this->db->select("DM_DEPT_CODE, DM_DEPT_DESC, DM_DEPT_CODE ||' - '|| DM_DEPT_DESC AS DEPT_CODE_DESC");
-        $this->db->from('DEPARTMENT_MAIN');
-		$this->db->where('COALESCE(DM_STATUS,\'INACTIVE\')', 'ACTIVE');
-        $this->db->where('DM_LEVEL IN (1,2)');
+        $this->db->select('dm_dept_code DM_DEPT_CODE, dm_dept_desc DM_DEPT_DESC, dm_dept_code ||\' - \'|| dm_dept_desc AS "DEPT_CODE_DESC"');
+        $this->db->from('ims_hris.department_main');
+		$this->db->where('COALESCE(dm_status,\'INACTIVE\')', 'ACTIVE');
+        $this->db->where('dm_level IN (1,2)');
         if(!empty($deptCode)) {
-            $this->db->where('DM_DEPT_CODE', $deptCode);
+            $this->db->where('dm_dept_code', $deptCode);
         }
-        $this->db->order_by('DM_DEPT_CODE');
+        $this->db->order_by('dm_dept_code');
         $q = $this->db->get();
 		        
         return $q->result();
     }
 
-    // POPULATE DEPARTMENT LIST 2
+    // POPULATE DEPARTMENT LIST 2 -postgres
     public function populateDept2($deptCode) {
-        $this->db->select("DM_DEPT_CODE, DM_DEPT_DESC, DM_DEPT_CODE ||' - '|| DM_DEPT_DESC AS DEPT_CODE_DESC");
-        $this->db->from('DEPARTMENT_MAIN');
-		$this->db->where('COALESCE(DM_STATUS,\'INACTIVE\')', 'ACTIVE');
-        $this->db->where('DM_LEVEL IN (1,2)');
+        $this->db->select('dm_dept_code DM_DEPT_CODE, dm_dept_desc DM_DEPT_DESC, dm_dept_code ||\' - \'|| dm_dept_desc AS "DEPT_CODE_DESC"');
+        $this->db->from('ims_hris.department_main');
+		$this->db->where('COALESCE(dm_status,\'INACTIVE\')', 'ACTIVE');
+        $this->db->where('dm_level IN (1,2)');
         if(!empty($deptCode)) {
-            $this->db->where('DM_DEPT_CODE', $deptCode);
+            $this->db->where('dm_dept_code', $deptCode);
         }
-        $this->db->order_by('DM_DEPT_CODE');
+        $this->db->order_by('dm_dept_code');
         $q = $this->db->get();
 		        
         return $q->result();
     }
 
-    // GET YEAR DROPDOWN
+    // GET YEAR DROPDOWN -postgres
     public function getYearList() {		
-        $this->db->select("to_char(CM_DATE, 'YYYY') AS CM_YEAR");
-        $this->db->from("CALENDAR_MAIN");
-		$this->db->where("to_char(CM_DATE, 'YYYY') >= to_char(SYSDATE, 'YYYY') - 15");
-        $this->db->group_by("to_char(CM_DATE, 'YYYY')");
-        $this->db->order_by("to_char(CM_DATE, 'YYYY') DESC");
+        $this->db->select('to_char(cm_date, \'YYYY\') AS "CM_YEAR"');
+        $this->db->from("ims_hris.calendar_main");
+		$this->db->where("to_char(cm_date, 'YYYY')::numeric >= to_char(current_date, 'YYYY')::numeric - 15");
+        $this->db->group_by("to_char(cm_date, 'YYYY')");
+        $this->db->order_by("to_char(cm_date, 'YYYY') DESC");
         $q = $this->db->get();
 		        
         return $q->result();
     } 
 
-    // GET MONTH DROPDOWN
+    // GET MONTH DROPDOWN -postgres
     public function getMonthList() 
     {		
-        $this->db->select("to_char(CM_DATE, 'MM') AS CM_MM, to_char(CM_DATE, 'MONTH') AS CM_MONTH");
-        $this->db->from("CALENDAR_MAIN");
-        $this->db->group_by("to_char(CM_DATE,'MM'), to_char(CM_DATE, 'MONTH')");
-        $this->db->order_by("to_char(CM_DATE, 'MM')");
+        $this->db->select('to_char(cm_date, \'MM\') AS "CM_MM", to_char(cm_date, \'MONTH\') AS "CM_MONTH"');
+        $this->db->from("ims_hris.calendar_main");
+        $this->db->group_by("to_char(cm_date,'MM'), to_char(cm_date, 'MONTH')");
+        $this->db->order_by("to_char(cm_date, 'MM')");
         $q = $this->db->get();
 		        
         return $q->result();
@@ -1778,27 +1837,27 @@ class Training_application_model extends MY_Model
     //     }   
     // }
 
-    // GET STAFF LIST BASED FROM TRAINING
+    // GET STAFF LIST BASED FROM TRAINING -postgres
     public function getStaffTrainingApplication($refid)
     {
 
-        $this->db->select("STH_STAFF_ID, SM_STAFF_ID, SM_STAFF_NAME, SM_DEPT_CODE, SJS_STATUS_DESC, STH_STATUS, SM_EMAIL_ADDR, TO_CHAR(STH_APPLY_DATE, 'DD/MM/YYYY') AS STHAPPDATE, STH_DEPT_TRAINING_BENEFIT");
-        $this->db->from("STAFF_TRAINING_HEAD");
-        $this->db->join("STAFF_MAIN", "STH_STAFF_ID = SM_STAFF_ID", "LEFT");
-        $this->db->join("STAFF_SERVICE", "STH_STAFF_ID = SS_STAFF_ID", "LEFT");
-        $this->db->join("STAFF_JOB_STATUS", "SS_JOB_STATUS = SJS_STATUS_CODE", "LEFT");
-        $this->db->where("STH_STATUS = 'RECOMMEND'");
-        $this->db->where("STH_TRAINING_REFID", $refid);
+        $this->db->select('sth_staff_id STH_STAFF_ID, sm_staff_id SM_STAFF_ID, sm_staff_name SM_STAFF_NAME,  sm_dept_code SM_DEPT_CODE, sjs_status_desc SJS_STATUS_DESC, sth_status STH_STATUS, sm_email_addr SM_EMAIL_ADDR, TO_CHAR(sth_apply_date, \'DD/MM/YYYY\') AS "STHAPPDATE", sth_dept_training_benefit STH_DEPT_TRAINING_BENEFIT');
+        $this->db->from("ims_hris.staff_training_head");
+        $this->db->join("ims_hris.staff_main", "sth_staff_id = sm_staff_id", "LEFT");
+        $this->db->join("ims_hris.staff_service", "sth_staff_id = ss_staff_id", "LEFT");
+        $this->db->join("ims_hris.staff_job_status", "ss_job_status = sjs_status_code", "LEFT");
+        $this->db->where("sth_status = 'RECOMMEND'");
+        $this->db->where("sth_training_refid", $refid);
         $this->db->order_by("get_staff_dept(sth_staff_id)");
         $q = $this->db->get();
 		        
         return $q->result();
     }
 
-    // GET STAFF EVA ID
+    // GET STAFF EVA ID -postgres
     public function getStaffTrainingApplicationEvaID($refid, $staff_id)
     {
-        $query = "SELECT SM_STAFF_ID||' '||SM_STAFF_NAME||' ('||SM_EMAIL_ADDR||')' STAFF
+        /*$query = "SELECT SM_STAFF_ID||' '||SM_STAFF_NAME||' ('||SM_EMAIL_ADDR||')' STAFF
 		FROM STAFF_TRAINING_HEAD,STAFF_MAIN
 		WHERE STH_TRAINING_REFID = '$refid'
         AND STH_STATUS = 'RECOMMEND'
@@ -1813,16 +1872,33 @@ class Training_application_model extends MY_Model
         AND STH_VERIFY_BY IS NULL 
         AND STH_RECOMMEND_BY IS NULL
         AND NVL(LEAVE_STAFF_HIERARCHY.LSH_RECOMMEND_BY,LSH_APPROVE_BY) = SM_STAFF_ID
-        AND STH_STAFF_ID = '$staff_id'";
+        AND STH_STAFF_ID = '$staff_id'";*/
+
+        $query = 'SELECT sm_staff_id||\' \'||sm_staff_name||\' (\'||sm_email_addr||\')\' STAFF
+        FROM ims_hris.staff_training_head,ims_hris.staff_main
+        WHERE STH_TRAINING_REFID = \'$refid\'
+        AND sth_status = \'RECOMMEND\'
+        AND COALESCE(sth_verify_by,sth_recommend_by) = sm_staff_id
+        AND sth_staff_id = \'$staff_id\'
+        UNION
+        SELECT sm_staff_id||\' \'||sm_staff_name||\' (\'||sm_email_addr||\')\' "STAFF"
+        FROM ims_hris.leave_staff_hierarchy,ims_hris.staff_main,ims_hris.staff_training_head
+        WHERE ims_hris.leave_staff_hierarchy.lsh_staff_id = sth_staff_id
+        AND sth_training_refid = \'$refid\'
+        AND sth_status = \'RECOMMEND\'
+        AND sth_verify_by IS NULL 
+        AND sth_recommend_by IS NULL
+        AND COALESCE(ims_hris.leave_staff_hierarchy.lsh_recommend_by,lsh_approve_by) = sm_staff_id
+        AND sth_staff_id = \'$staff_id\'';
 
         $q = $this->db->query($query);
         return $q->row();
     }
 
-    // GET EVALUATOR INFO
+    // GET EVALUATOR INFO -postgres
     public function getEvaluatorInfo($refid, $staffID)
     {
-        $query = "SELECT SM_STAFF_ID||' - '||SM_STAFF_NAME||' ('||SM_EMAIL_ADDR||')' AS STAFF
+        /*$query = "SELECT SM_STAFF_ID||' - '||SM_STAFF_NAME||' ('||SM_EMAIL_ADDR||')' AS STAFF
         FROM STAFF_TRAINING_HEAD, STAFF_MAIN
         WHERE STH_TRAINING_REFID = '$refid'
         AND STH_STATUS = 'RECOMMEND'
@@ -1837,22 +1913,49 @@ class Training_application_model extends MY_Model
         AND STH_VERIFY_BY IS NULL 
         AND STH_RECOMMEND_BY IS NULL
         AND NVL(LEAVE_STAFF_HIERARCHY.LSH_RECOMMEND_BY,LSH_APPROVE_BY) = SM_STAFF_ID
-        AND STH_STAFF_ID = '$staffID'";
+        AND STH_STAFF_ID = '$staffID'";*/
+
+
+
+        $query = 'SELECT sm_staff_id||\' - \'||sm_staff_name||\' (\'||sm_email_addr||\')\' AS "STAFF"
+        FROM ims_hris.STAFF_TRAINING_HEAD, ims_hris.STAFF_MAIN
+        WHERE sth_training_refid = \'$refid\'
+        AND sth_status = \'RECOMMEND\'
+        AND coalesce(sth_verify_by,sth_recommend_by) = sm_staff_id
+        AND sth_staff_id = \'$staffID\'
+        UNION
+        SELECT sm_staff_id||\' - \'||sm_staff_name||\' (\'||sm_email_addr||\')\' AS "STAFF"
+        FROM ims_hris.leave_staff_hierarchy,ims_hris.staff_main,ims_hris.staff_training_head
+        WHERE ims_hris.leave_staff_hierarchy.lsh_staff_id = sth_staff_id
+        AND sth_training_refid = \'$refid\'
+        AND sth_status = \'RECOMMEND\'
+        AND sth_verify_by IS NULL 
+        AND sth_recommend_by IS NULL
+        AND coalesce(ims_hris.leave_staff_hierarchy.lsh_recommend_by,lsh_approve_by) = sm_staff_id
+        AND sth_staff_id = \'$staffID\'';
 
         $q = $this->db->query($query);
         return $q->row();
     }
 
-    // GET EVALUATOR ID
+    // GET EVALUATOR ID -postgres
     public function getEvaluatorID($refid, $staffID)
     {
-        $query = "SELECT NVL(STH_VERIFY_BY, NVL(STH_RECOMMEND_BY, NVL(LSH_RECOMMEND_BY, LSH_APPROVE_BY))) AS EVAID
+        /*$query = "SELECT NVL(STH_VERIFY_BY, NVL(STH_RECOMMEND_BY, NVL(LSH_RECOMMEND_BY, LSH_APPROVE_BY))) AS EVAID
         FROM STAFF_TRAINING_HEAD,LEAVE_STAFF_HIERARCHY,TRAINING_HEAD_DETL
         WHERE STH_STAFF_ID = '$staffID'
         AND STH_TRAINING_REFID = '$refid'
         AND NVL(THD_EVALUATION,'N') = 'Y' 
         AND THD_REF_ID = STH_TRAINING_REFID
-        AND LSH_STAFF_ID = STH_STAFF_ID";
+        AND LSH_STAFF_ID = STH_STAFF_ID";*/
+
+        $query = 'SELECT coalesce(sth_verify_by, coalesce(sth_recommend_by, coalesce(lsh_recommend_by, lsh_approve_by)))AS "EVAID"
+        FROM ims_hris.staff_training_head,ims_hris.leave_staff_hierarchy,ims_hris.training_head_detl
+        WHERE sth_staff_id = \'$staffID\'
+        AND sth_training_refid = \'$refid\'
+        AND coalesce(thd_evaluation,\'N\') = \'Y\' 
+        AND thd_ref_id = sth_training_refid
+        AND lsh_staff_id = sth_staff_id';
 
         $q = $this->db->query($query);
         return $q->row();
