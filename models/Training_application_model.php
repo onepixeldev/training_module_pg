@@ -1965,44 +1965,44 @@ class Training_application_model extends MY_Model
     public function getStaffMainDis($refid, $staffID, $resend = null)
     {
         if($resend == 1) {
-            $query = "SELECT DISTINCT SM_EMAIL_ADDR, NVL(STH_VERIFY_BY,STH_RECOMMEND_BY) STAFF, SM_STAFF_NAME
-            FROM STAFF_TRAINING_HEAD, STAFF_MAIN
-            WHERE STH_TRAINING_REFID = '$refid'
-            AND STH_STATUS = 'APPROVE'
-            AND NVL(STH_VERIFY_BY, STH_RECOMMEND_BY) = SM_STAFF_ID
-            AND STH_STAFF_ID = '$staffID'
-            UNION
-            SELECT DISTINCT SM_EMAIL_ADDR, NVL(LEAVE_STAFF_HIERARCHY.LSH_RECOMMEND_BY, LSH_APPROVE_BY) STAFF, SM_STAFF_NAME
-            FROM LEAVE_STAFF_HIERARCHY, STAFF_MAIN, STAFF_TRAINING_HEAD
-            WHERE LEAVE_STAFF_HIERARCHY.LSH_STAFF_ID = STH_STAFF_ID
-            AND STH_TRAINING_REFID = '$refid'
-            AND STH_STATUS = 'APPROVE'
-            AND STH_VERIFY_BY IS NULL 
-            AND STH_RECOMMEND_BY IS NULL
-            AND NVL(LEAVE_STAFF_HIERARCHY.LSH_RECOMMEND_BY, LSH_APPROVE_BY) = SM_STAFF_ID
-            AND STH_STAFF_ID = '$staffID'";
+            $query = "select distinct sm_email_addr, nvl(sth_verify_by,sth_recommend_by) staff, sm_staff_name
+            from staff_training_head, staff_main
+            where sth_training_refid = '$refid'
+            and sth_status = 'APPROVE'
+            and coalesce(sth_verify_by, sth_recommend_by) = sm_staff_id
+            and sth_staff_id = '$staffID'
+            union
+            select distinct sm_email_addr, nvl(leave_staff_hierarchy.lsh_recommend_by, lsh_approve_by) staff, sm_staff_name
+            from leave_staff_hierarchy, staff_main, staff_training_head
+            where leave_staff_hierarchy.lsh_staff_id = sth_staff_id
+            and sth_training_refid = '$refid'
+            and sth_status = 'APPROVE'
+            and sth_verify_by IS NULL 
+            and sth_recommend_by IS NULL
+            and coalesce(leave_staff_hierarchy.lsh_recommend_by, lsh_approve_by) = sm_staff_id
+            and sth_staff_id = '$staffID'";
         } else {
-            $query = "SELECT DISTINCT SM_EMAIL_ADDR, NVL(STH_VERIFY_BY,STH_RECOMMEND_BY) STAFF, SM_STAFF_NAME
-            FROM STAFF_TRAINING_HEAD, STAFF_MAIN
-            WHERE STH_TRAINING_REFID = '$refid'
-            AND STH_STATUS = 'RECOMMEND'
-            AND NVL(STH_VERIFY_BY, STH_RECOMMEND_BY) = SM_STAFF_ID
-            AND STH_STAFF_ID = '$staffID'
-            UNION
-            SELECT DISTINCT SM_EMAIL_ADDR, NVL(LEAVE_STAFF_HIERARCHY.LSH_RECOMMEND_BY, LSH_APPROVE_BY) STAFF, SM_STAFF_NAME
-            FROM LEAVE_STAFF_HIERARCHY, STAFF_MAIN, STAFF_TRAINING_HEAD
-            WHERE LEAVE_STAFF_HIERARCHY.LSH_STAFF_ID = STH_STAFF_ID
-            AND STH_TRAINING_REFID = '$refid'
-            AND STH_STATUS = 'RECOMMEND'
-            AND STH_VERIFY_BY IS NULL 
-            AND STH_RECOMMEND_BY IS NULL
-            AND NVL(LEAVE_STAFF_HIERARCHY.LSH_RECOMMEND_BY, LSH_APPROVE_BY) = SM_STAFF_ID
-            AND STH_STAFF_ID = '$staffID'";
+            $query = "select distinct sm_email_addr, coalesce(sth_verify_by,sth_recommend_by) staff, sm_staff_name
+            from staff_training_head, staff_main
+            where sth_training_refid = '$refid'
+            and sth_status = 'RECOMMEND'
+            and coalesce(sth_verify_by, sth_recommend_by) = sm_staff_id
+            and sth_staff_id = '$staffID'
+            union
+            select distinct sm_email_addr, coalesce(leave_staff_hierarchy.lsh_recommend_by, lsh_approve_by) staff, sm_staff_name
+            From leave_staff_hierarchy, staff_main, staff_training_head
+            where leave_staff_hierarchy.lsh_staff_id = sth_staff_id
+            and sth_training_refid = '$refid'
+            and sth_status = 'RECOMMEND'
+            and sth_verify_by is null 
+            and sth_recommend_by is null
+            and coalesce(leave_staff_hierarchy.lsh_recommend_by, lsh_approve_by) = sm_staff_id
+            and sth_staff_id = '$staffID'";
         }
         
 
         $q = $this->db->query($query);
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
     // GET TRAINING COORDINATOR
@@ -2320,85 +2320,86 @@ class Training_application_model extends MY_Model
        APPROVE TRAINING SETUP - ATF027
     =============================================================*/
 
-    // STAFF TRAINING RECORDS
+    // STAFF TRAINING RECORDS -postgres
     public function getStaffTrainingRecords($refid)
     {
-        $this->db->select("COUNT(1) AS CC");
-        $this->db->from("STAFF_TRAINING_HEAD");
-        $this->db->where("STH_TRAINING_REFID", $refid);
+        $this->db->select("count(1) as cc");
+        $this->db->from("ims_hris.staff_training_head");
+        $this->db->where("sth_training_refid", $refid);
 
         $q = $this->db->get();
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // APPROVE TRAINING
+    // APPROVE TRAINING -postgres
     public function approveTrainingSetup($refid)
     {
         $currentUsr = $this->staff_id;
-        $curDate = 'SYSDATE';
+        $curDate = "date_trunc('second', NOW()::timestamp)";
 
         $data = array(
-            "TH_STATUS" => 'APPROVE',
-            "TH_APPROVE_BY" => $currentUsr
+            "th_status" => 'APPROVE',
+            "th_approve_by" => $currentUsr
         );
 
-        $this->db->set("TH_APPROVE_DATE", $curDate, false);
+        $this->db->set("th_approve_date", $curDate, false);
 
-        $this->db->where("TH_REF_ID", $refid);
+        $this->db->where("th_ref_id", $refid);
 
-        return $this->db->update("TRAINING_HEAD", $data);
+        return $this->db->update("ims_hris.training_head", $data);
     } 
     
-    // APPROVE TRAINING
+    // POSTPONE TRAINING -postgres
     public function postponeTrainingSetup($refid)
     {
         $currentUsr = $this->staff_id;
-        $curDate = 'SYSDATE';
+        $curDate = "date_trunc('second', NOW()::timestamp)";
 
         $data = array(
-            "TH_STATUS" => 'POSTPONE',
-            "TH_APPROVE_BY" => $currentUsr
+            "th_status" => 'POSTPONE',
+            "th_approve_by" => $currentUsr
         );
 
-        $this->db->set("TH_APPROVE_DATE", $curDate, false);
+        $this->db->set("th_approve_date", $curDate, false);
 
-        $this->db->where("TH_REF_ID", $refid);
+        $this->db->where("th_ref_id", $refid);
 
-        return $this->db->update("TRAINING_HEAD", $data);
+        return $this->db->update("ims_hris.training_head", $data);
     }  
     
-    // REJECT TRAINING
+    // REJECT TRAINING -postgres
     public function rejectTrainingSetup($refid)
     {
         $currentUsr = $this->staff_id;
-        $curDate = 'SYSDATE';
+        $curDate = "date_trunc('second', NOW()::timestamp)";
 
         $data = array(
-            "TH_STATUS" => 'REJECT',
-            "TH_APPROVE_BY" => $currentUsr
+            "th_status" => 'REJECT',
+            "th_approve_by" => $currentUsr
         );
 
-        $this->db->set("TH_APPROVE_DATE", $curDate, false);
+        $this->db->set("th_approve_date", $curDate, false);
 
-        $this->db->where("TH_REF_ID", $refid);
+        $this->db->where("th_ref_id", $refid);
 
-        return $this->db->update("TRAINING_HEAD", $data);
+        return $this->db->update("ims_hris.training_head", $data);
     }
 
+    // -postgres
     public function rejectStaffTraining($refid)
     {
         // $currentUsr = $this->staff_id;
         // $curDate = 'SYSDATE';
 
         $data = array(
-            "STH_STATUS" => 'REJECT'
+            "sth_status" => 'REJECT'
         );
 
         //$this->db->set("TH_APPROVE_DATE", $curDate, false);
 
-        $this->db->where("STH_TRAINING_REFID", $refid);
+        $this->db->where("sth_training_refid", $refid);
 
-        return $this->db->update("STAFF_TRAINING_HEAD", $data);
+        return $this->db->update("ims_hris.staff_training_head", $data);
     }
 
     // AMEND TRAINING
