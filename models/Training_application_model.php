@@ -2482,7 +2482,7 @@ class Training_application_model extends MY_Model
     public function getEcommUrl()
     {
         $this->db->select("hp_parm_desc");
-        $this->db->from("hradmin_parms");
+        $this->db->from("ims_hris.hradmin_parms");
         $this->db->where("hp_parm_code = 'ECOMMUNITY_STAFF_URL'");
 
         $q = $this->db->get();
