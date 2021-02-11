@@ -6,6 +6,8 @@ class Training_application extends MY_Controller
 {
     private $staff_id;
     private $username;
+    private $rep_path = "/Reports/PG_MyHRIS/HRA_AT/";
+
 
     public function __construct()
     {
@@ -3985,7 +3987,7 @@ class Training_application extends MY_Controller
         //var_dump($email_cc);
         $sendEmailSts = $this->mdl->sendEmail($memo_from, $emailForm, $emailCCForm, $msg_title, $msg_content);
 
-        if($sendEmailSts > 0) {
+        if($sendEmailSts == true) {
             
             // update/insert memo status
             foreach ($staff_id_arr as $sia) {
@@ -6750,7 +6752,7 @@ class Training_application extends MY_Controller
 			$this->jasperreport->setAttachment();
 		}
 		
-		$this->jasperreport->runReport("/Reports/MyHRIS/HRA_AT/" . $repCode,$format,$param);
+		$this->jasperreport->runReport($this->rep_path.$repCode,$format,$param);
     }
     
     // QUERY TRAINING FROM STRUCTURED TRAINING

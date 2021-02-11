@@ -907,7 +907,7 @@ class Training_application_model extends MY_Model
         if(!empty($svcGrp)){
             $this->db->where("ss_service_group", $svcGrp);
         }
-        $this->db->where("ltrim(ss_salary_grade, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')::numeric <= '$gradeTo'");
+        $this->db->where("ltrim(ss_salary_grade, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') <= '$gradeTo'");
 
         $q = $this->db->get();
         return $q->result();
@@ -1759,7 +1759,8 @@ class Training_application_model extends MY_Model
         }
 
         if($screRpt == '1') {
-            $this->db->where("to_char(to_date(th_date_from, 'DD/MM/YYYY'), 'YYYYMMDD')::numeric < to_char(to_date(current_date, 'DD/MM/YYYY'), 'YYYYMMDD')::numeric");
+            // $this->db->where("to_char(to_date(th_date_from, 'DD/MM/YYYY'), 'YYYYMMDD')::numeric < to_char(to_date(current_date, 'DD/MM/YYYY'), 'YYYYMMDD')::numeric");
+            $this->db->where("to_char(th_date_from, 'YYYYMMDD')::numeric < to_char(current_date, 'YYYYMMDD')::numeric");
             $this->db->where("th_organizer_name = 'ULAT'");
         }
         
@@ -2017,7 +2018,7 @@ class Training_application_model extends MY_Model
             and sth_staff_id = '$staffID'
             union
             select distinct sm_email_addr, coalesce(leave_staff_hierarchy.lsh_recommend_by, lsh_approve_by) staff, sm_staff_name
-            from leave_staff_hierarchy, staff_main, staff_training_head
+            from ims_hris.leave_staff_hierarchy, ims_hris.staff_main, ims_hris.staff_training_head
             where leave_staff_hierarchy.lsh_staff_id = sth_staff_id
             and sth_training_refid = '$refid'
             and sth_status = 'APPROVE'
@@ -2034,7 +2035,7 @@ class Training_application_model extends MY_Model
             and sth_staff_id = '$staffID'
             union
             select distinct sm_email_addr, coalesce(leave_staff_hierarchy.lsh_recommend_by, lsh_approve_by) staff, sm_staff_name
-            From leave_staff_hierarchy, staff_main, staff_training_head
+            From ims_hris.leave_staff_hierarchy, ims_hris.staff_main, ims_hris.staff_training_head
             where leave_staff_hierarchy.lsh_staff_id = sth_staff_id
             and sth_training_refid = '$refid'
             and sth_status = 'RECOMMEND'
@@ -2159,30 +2160,58 @@ class Training_application_model extends MY_Model
     // -hold postgres
 
     public function sendEmail($memo_from, $staff_app_email, $email_cc, $msg_title, $msg_content) {
-		if (empty($memo_from)) {
-			$memo_from = 'bsm.latihan@upsi.edu.my';
-		}
-		if (empty($email_cc)) {
-			$email_cc = null;
-		}
+        // var_dump($memo_from);
+        // exit();
+        // $memo_from_name = 'BSM';
+		// if (empty($memo_from)) {
+        //     $memo_from = 'bsm.latihan@upsi.edu.my';
+		// }
+		// if (empty($email_cc)) {
+		// 	$email_cc = null;
+		// }
 		
-		// execute create_memo procedure
-		$sql = 'begin utl_mail.send(
-					sender=>?,
-					recipients=>?,
-					cc=>?,
-					subject=>?,
-					message=>?,
-					mime_type=>\'text/html\'		
-				); end;';
-        $q = $this->db->query($sql, array($memo_from, $staff_app_email, $email_cc, $msg_title, $msg_content));
+		// // execute create_memo procedure
+		// $sql = 'begin utl_mail.send(
+		// 			sender=>?,
+		// 			recipients=>?,
+		// 			cc=>?,
+		// 			subject=>?,
+		// 			message=>?,
+		// 			mime_type=>\'text/html\'		
+		// 		); end;';
+        // $q = $this->db->query($sql, array($memo_from, $staff_app_email, $email_cc, $msg_title, $msg_content));
 
-		if ($q === FALSE) {
-			// return 0 if fail to execute create_memo
-			return 0;
-		}
+		// if ($q === FALSE) {
+		// 	// return 0 if fail to execute create_memo
+		// 	return 0;
+		// }
 		
-		return 1;
+        // return 1;
+
+        $memo_from_name = 'BSM';
+		if (empty($memo_from)) {
+            $memo_from = 'bsm.latihan@upsi.edu.my';
+		}
+        
+        // load library
+        $this->load->library('email');
+        $this->email->clear();
+        $this->email->set_mailtype('html');
+
+        $this->email->from($memo_from, $memo_from_name);
+        $this->email->to($staff_app_email);
+
+        if (!empty($email_cc)) {
+            $this->email->cc($email_cc);
+        }
+
+        $this->email->subject($msg_title);
+        $this->email->message($msg_content);
+
+        return $this->email->send();
+        // var_dump($this->email->send());
+        // exit();
+
     }
 
 
@@ -2506,7 +2535,7 @@ class Training_application_model extends MY_Model
         if(!empty($stfID)) {
             $this->db->where("upper(sm_staff_id) = upper('$stfID') OR upper(sm_staff_name) like upper('%$stfID%')");
         }
-        $this->db->where("sm_staff_status in (select ss_status_code from staff_status where ss_status_sts='ACTIVE')");
+        $this->db->where("sm_staff_status in (select ss_status_code from ims_hris.staff_status where ss_status_sts='ACTIVE')");
         $this->db->where("sm_staff_type <> 'SYSTEM'");
         $this->db->order_by("sm_staff_name");
 
@@ -2670,7 +2699,7 @@ class Training_application_model extends MY_Model
         FROM ims_hris.training_requirement_main,ims_hris.training_requirement_detl
         WHERE trm_code = trd_id
         AND trm_setup_code IN (SELECT trs_code
-        FROM training_requirement_setup 
+        FROM ims_hris.training_requirement_setup 
         WHERE trs_remark IS NOT NULL
         AND trs_date_to IS NULL)
         AND trm_staff_id = '$staffID'
@@ -3472,7 +3501,7 @@ class Training_application_model extends MY_Model
                             AND sth_participant_role = 'D'
                             AND std_attend IN ('Y','A')
                             AND sth_training_refid = '$refid'
-                        )");
+                        ) AS A");
 
         $q = $this->db->get();
         return $q->row_case('UPPER');
@@ -3482,7 +3511,7 @@ class Training_application_model extends MY_Model
     public function getScreOnDuty($refid) {
         $this->db->select("tsi_seq, tsi_incharge, sm_staff_name, to_char(tsi_incharge_date, 'dd/mm/yyyy') as incharge_date");
         $this->db->from("ims_hris.training_secret_incharge");
-        $this->db->join("staff_main", "sm_staff_id = tsi_incharge");
+        $this->db->join("ims_hris.staff_main", "sm_staff_id = tsi_incharge");
         $this->db->where("tsi_refid", $refid);
         $this->db->order_by("tsi_seq");
 
@@ -3589,7 +3618,7 @@ class Training_application_model extends MY_Model
         FROM(
         select max(tsi_seq)::numeric+1 as tsi_seq
         from ims_hris.training_secret_incharge
-        where tsi_refid = '$refid'))";
+        where tsi_refid = '$refid') as A)";
 
         $curDate = "date_trunc('second', NOW()::timestamp)";
 
