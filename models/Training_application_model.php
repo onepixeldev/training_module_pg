@@ -2157,7 +2157,7 @@ class Training_application_model extends MY_Model
     /*_____________________
         SEND EMAIL
     _______________________*/
-    // -hold postgres
+    // -postgres
 
     public function sendEmail($memo_from, $staff_app_email, $email_cc, $msg_title, $msg_content) {
         // var_dump($memo_from);
@@ -2882,7 +2882,7 @@ class Training_application_model extends MY_Model
         AND sth_training_refid = '$refid'
         AND th_internal_external = 'EXTERNAL_AGENCY'
         AND (((sth_service_book IS NULL OR sth_service_book = 'N') AND NOT EXISTS (SELECT *
-        FROM service_book_head 
+        FROM ims_hris.service_book_head 
         WHERE sbh_subsystem_refid = sth_training_refid
         AND sbh_staff_id = sth_staff_id
         AND sbh_subsystem_id = 'COURSE'
@@ -2955,7 +2955,7 @@ class Training_application_model extends MY_Model
         
         AND sth_training_refid = '$refid'
         AND sth_participant_role = 'D'
-        ) 
+        ) AS a 
         LEFT JOIN ims_hris.service_book_head ON sbh_staff_id = sth_staff_id AND sbh_subsystem_refid = sth_training_refid";
 
         $q = $this->db->query($query);
@@ -3018,9 +3018,7 @@ class Training_application_model extends MY_Model
         $curUser = $this->staff_id;
         $curDate = "date_trunc('second', NOW()::timestamp)";
         //$sbhRefid = "to_char(sysdate,'YYYY') || '-' || ltrim(to_char(SERVICE_DETL_SEQ.nextval,'00000000'))";
-        $this->db->select('TO_CHAR(CURRENT_DATE,\'YYYY\')||\'-\'||LTRIM(TO_CHAR(nextval(\'ims_hris.service_detl_seq\'),\'00000000\')) AS "REF_ID"');
-
-        
+        $sbhRefid = 'TO_CHAR(CURRENT_DATE,\'YYYY\')||\'-\'||LTRIM(TO_CHAR(nextval(\'ims_hris.service_detl_seq\'),\'00000000\'))';
 
         $data = array(
             "sbh_staff_id" => $sid,
@@ -3040,12 +3038,12 @@ class Training_application_model extends MY_Model
         );
 
         if(!empty($tr_date_from)) {
-            $date = "to_date('".$tr_date_from."','DD-mm-YYYY')";
+            $date = "to_date('".$tr_date_from."','DD-MM-YYYY')";
             $this->db->set("sbh_start_date", $date, false);
         }
 
         if(!empty($tr_date_to)) {
-            $date = "to_date('".$tr_date_to."','DD-mm-YYYY')";
+            $date = "to_date('".$tr_date_to."','DD-MM-YYYY')";
             $this->db->set("sbh_end_date", $date, false);
         }
 
@@ -3152,7 +3150,7 @@ class Training_application_model extends MY_Model
     public function getEvaluatorList() {
         $this->db->select("sm_staff_id, sm_staff_name, sm_staff_id||' - '||sm_staff_name stf_id_name");
         $this->db->from("ims_hris.staff_main");
-        $this->db->where("sm_staff_status in (select ss_status_code from staff_status where ss_status_sts='ACTIVE')");
+        $this->db->where("sm_staff_status in (select ss_status_code from ims_hris.staff_status where ss_status_sts='ACTIVE')");
         $this->db->where("sm_staff_id LIKE 'K%'");
         $this->db->order_by("sm_staff_name");
 
@@ -3224,72 +3222,72 @@ class Training_application_model extends MY_Model
      /*===========================================================
        Staff Evaluator Send Memo - ATF121
     =============================================================*/
-    // GET STAFF LIST -hold postgres
+    // GET STAFF LIST -postgres
     public function getStaffListSendMemo($refid, $staffID = null)
     {
         $this->db->distinct();
-        $this->db->select("STH.STH_STAFF_ID STF_ID, SM1.SM_STAFF_NAME STF_N1, 
-                            SM1.SM_DEPT_CODE STF_DEPT1, to_char(STH.STH_SUBMIT_DATE, 'DD/MM/YYYY') STH_SB_DT, 
-                            STH.STH_EVALUATOR_ID EVA_ID, SM2.SM_STAFF_NAME STF_N2,
-                            STH.STH_EVALUATOR_ID ||' - '|| SM2.SM_STAFF_NAME EVA_ID_NAME, 
-                            MAX(TEH.TEH_SEQ) OVER (PARTITION BY STH.STH_STAFF_ID) SND_MEM");
-        $this->db->from("STAFF_TRAINING_HEAD STH");
-        $this->db->join("STAFF_MAIN SM1", "STH.STH_STAFF_ID = SM1.SM_STAFF_ID", "LEFT");
-        $this->db->join("STAFF_MAIN SM2", "STH.STH_EVALUATOR_ID = SM2.SM_STAFF_ID", "LEFT");
-        $this->db->join("TRAINING_EVALUATION_HIS TEH", "TEH.TEH_TRAINING_REFID = STH.STH_TRAINING_REFID AND TEH.TEH_SEND_TO = STH.STH_EVALUATOR_ID and TEH.TEH_CC = STH.STH_STAFF_ID", "LEFT");
-        $this->db->where("STH_STAFF_ID IN 
+        $this->db->select("sth.sth_staff_id stf_id, sm1.sm_staff_name stf_n1, 
+                            sm1.sm_dept_code stf_dept1, to_char(sth.sth_submit_date, 'dd/mm/yyyy') sth_sb_dt, 
+                            sth.sth_evaluator_id eva_id, sm2.sm_staff_name stf_n2,
+                            sth.sth_evaluator_id ||' - '|| sm2.sm_staff_name eva_id_name, 
+                            max(teh.teh_seq) over (partition by sth.sth_staff_id) snd_meM");
+        $this->db->from("ims_hris.staff_training_head sth");
+        $this->db->join("ims_hris.staff_main sm1", "sth.sth_staff_id = sm1.sm_staff_id", "left");
+        $this->db->join("ims_hris.staff_main sm2", "sth.sth_evaluator_id = sm2.sm_staff_id", "left");
+        $this->db->join("ims_hris.training_evaluation_his teh", "teh.teh_training_refid = sth.sth_training_refid and teh.teh_send_to = sth.sth_evaluator_id and teh.teh_cc = sth.sth_staff_id", "left");
+        $this->db->where("sth_staff_id in 
                             (
-                            SELECT STH_STAFF_ID
-                            FROM STAFF_TRAINING_HEAD,TRAINING_HEAD 
-                            WHERE STH_STATUS = 'APPROVE' 
-                            AND STH_SUBMIT_DATE IS NOT NULL 
-                            AND STH_EVALUATOR_ID IS NOT NULL
-                            AND (STH_HOD_EVALUATION IS NULL OR STH_HOD_EVALUATION = 'N')
-                            AND STH_EVALUATION_DATE IS NULL
-                            AND STH_TRAINING_REFID = '$refid'
-                            AND STH_TRAINING_REFID = TH_REF_ID 
-                            AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
-                            AND TO_CHAR(TH_DATE_FROM,'YYYY') < '2016'
-                            UNION
-                            SELECT STH_STAFF_ID
-                            FROM STAFF_TRAINING_HEAD,TRAINING_HEAD 
-                            WHERE STH_STATUS = 'APPROVE' 
-                            AND STH_SUBMIT_DATE IS NOT NULL 
-                            AND STH_EVALUATOR_ID IS NOT NULL
-                            AND (STH_HOD_EVALUATION IS NULL OR STH_HOD_EVALUATION = 'N')
-                            AND STH_EVALUATION_DATE IS NULL
-                            AND STH_TRAINING_REFID = '$refid'
-                            AND STH_TRAINING_REFID = TH_REF_ID 
-                            AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
-                            UNION
-                            SELECT STH_STAFF_ID
-                            FROM STAFF_TRAINING_HEAD,TRAINING_HEAD,STAFF_TRAINING_DETL 
-                            WHERE STH_STATUS = 'APPROVE' 
-                            AND STH_SUBMIT_DATE IS NOT NULL 
-                            AND STH_EVALUATOR_ID IS NOT NULL
-                            AND (STH_HOD_EVALUATION IS NULL OR STH_HOD_EVALUATION = 'N')
-                            AND STH_EVALUATION_DATE IS NULL
-                            AND STH_TRAINING_REFID = '$refid'
-                            AND STH_TRAINING_REFID = TH_REF_ID 
-                            AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
-                            AND TO_CHAR(TH_DATE_FROM,'YYYY') >= '2016'
-                            AND STH_TRAINING_REFID = STD_TRAINING_REFID
-                            AND STH_STAFF_ID = STD_STAFF_ID
-                            AND STD_ATTEND IN ('Y','A')
+                            select sth_staff_id
+                            from ims_hris.staff_training_head,ims_hris.training_head 
+                            where sth_status = 'APPROVE' 
+                            and sth_submit_date is not null 
+                            and sth_evaluator_id is not null
+                            and (sth_hod_evaluation is null or sth_hod_evaluation = 'N')
+                            and sth_evaluation_date is null
+                            and sth_training_refid = '$refid'
+                            and sth_training_refid = th_ref_id 
+                            and th_internal_external <> 'EXTERNAL_AGENCY'
+                            and to_char(th_date_from,'yyyy') < '2016'
+                            union
+                            select sth_staff_id
+                            from ims_hris.staff_training_head,ims_hris.training_head 
+                            where sth_status = 'APPROVE' 
+                            and sth_submit_date is not null 
+                            and sth_evaluator_id is not null
+                            and (sth_hod_evaluation is null or sth_hod_evaluation = 'N')
+                            and sth_evaluation_date is null
+                            and sth_training_refid = '$refid'
+                            and sth_training_refid = th_ref_id 
+                            and th_internal_external = 'EXTERNAL_AGENCY'
+                            union
+                            select sth_staff_id
+                            from ims_hris.staff_training_head,ims_hris.training_head,ims_hris.staff_training_detl 
+                            where sth_status = 'APPROVE' 
+                            and sth_submit_date is not null 
+                            and sth_evaluator_id is not null
+                            and (sth_hod_evaluation is null or sth_hod_evaluation = 'N')
+                            and sth_evaluation_date is null
+                            and sth_training_refid = '$refid'
+                            and sth_training_refid = th_ref_id 
+                            and th_internal_external <> 'EXTERNAL_AGENCY'
+                            and to_char(th_date_from,'yyyy') >= '2016'
+                            and sth_training_refid = std_training_refid
+                            and sth_staff_id = std_staff_id
+                            and std_attend in ('Y','A')
                             )");
         
         if(!empty($staffID)) {
-            $this->db->where("STH.STH_TRAINING_REFID", $refid);
-            $this->db->where("STH.STH_STAFF_ID", $staffID);
+            $this->db->where("sth.sth_training_refid", $refid);
+            $this->db->where("sth.sth_staff_id", $staffID);
 
             $q = $this->db->get();
-            return $q->row();
+            return $q->row_case('UPPER');
         } else {
-            $this->db->where("STH.STH_TRAINING_REFID", $refid);
-            $this->db->order_by("STH.STH_EVALUATOR_ID");
+            $this->db->where("sth.sth_training_refid", $refid);
+            $this->db->order_by("sth.sth_evaluator_id");
 
             $q = $this->db->get();
-            return $q->result();
+            return $q->result_case('UPPER');
         }
     }
 
@@ -3428,7 +3426,7 @@ class Training_application_model extends MY_Model
                             to_char(th_date_from, 'dd/mm/yyyy')||' - '||to_char(th_date_to,'dd/mm/yyyy') th_date, th_date_from");
         $this->db->from("ims_hris.training_head");
         $this->db->where("th_status = 'APPROVE'");
-        $this->db->where("TO_CHAR(th_date_from,'YYYY') = coalesce($year,TO_CHAR(current_date,'YYYY'))");
+        $this->db->where("TO_CHAR(th_date_from,'YYYY')::numeric = coalesce($year,TO_CHAR(current_date,'YYYY')::numeric)");
         $this->db->where("th_ref_id IN (select tmh_training_refid from ims_hris.training_memo_history)");
         $this->db->order_by("th_date_from, th_training_title");
 

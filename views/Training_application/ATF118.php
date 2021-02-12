@@ -110,7 +110,6 @@
 						stfID = $(this).closest("tr").find(".sid").text();
 						sth_status = $(this).closest("tr").find(".sth_sts").text();
 						++selectedID;
-
 						if (sth_status != 'APPROVE') {
 							sthStatus = 1;
 						}
