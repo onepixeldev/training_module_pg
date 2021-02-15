@@ -282,10 +282,34 @@ class Cpd extends MY_Controller
     } 
     
     // GENERATE REPORT
-    public function report(){
+    public function reportOracle(){
 		$report = $this->encryption->decrypt_array($this->input->get('r'));
 		$this->lib->generate_report($report, false);
     }
+	
+	// Calling Jasper Reports
+	public function report(){
+		// Load jasperreport library
+		$this->load->library('jasperreport');
+		
+		// get report parameters
+		$param = $this->encryption->decrypt_array($this->input->get('r'));
+		
+		// get report code and format
+		$repCode = isset($param['REPORT'])?strtoupper($param['REPORT']):'';
+		$format = isset($param['FORMAT'])?strtolower($param['FORMAT']):'pdf';
+		
+		// for report format = excel / word, report will be downloaded as attachment
+		if ($format == 'excel') {
+			$format = 'xlsx';
+			$this->jasperreport->setAttachment();
+		} elseif ($format == 'word') {
+			$format = 'docx';
+			$this->jasperreport->setAttachment();
+		}
+		
+		$this->jasperreport->runReport("/Reports/MyHRIS/HRA_AT/" . $repCode,$format,$param);
+	}
 
     // AUTO SEARCH STAFF ID
     public function staffKeyUp()
@@ -2130,7 +2154,8 @@ class Cpd extends MY_Controller
             // CPD KHUSUS
             $ttlReqCpdKhu = $this->mdl_cpd->getTtlReqCpd($sid, $sys_yyyy, $comp1);
             if (!empty($ttlReqCpdKhu)) {
-                $jkhu = $ttlReqCpdKhu['REQ_CPD'];
+                // $jkhu = $ttlReqCpdKhu['REQ_CPD'];
+                $jkhu = $ttlReqCpdKhu->REQ_CPD;
             } else {
                 $jkhu = 0;
             }
@@ -2138,7 +2163,8 @@ class Cpd extends MY_Controller
             // CPD UMUM
             $ttlReqCpdUm = $this->mdl_cpd->getTtlReqCpd($sid, $sys_yyyy, $comp2);
             if (!empty($ttlReqCpdUm)) {
-                $jumum = (float)$ttlReqCpdUm['REQ_CPD'];
+                // $jumum = (float)$ttlReqCpdUm['REQ_CPD'];
+                $jumum = (float)$ttlReqCpdUm->REQ_CPD;
             } else {
                 $jumum = 0;
             }
@@ -2146,7 +2172,8 @@ class Cpd extends MY_Controller
             // CPD TERAS
             $ttlReqCpdTr = $this->mdl_cpd->getTtlReqCpd($sid, $sys_yyyy, $comp3);
             if (!empty($ttlReqCpdTr)) {
-                $jteras = $ttlReqCpdTr['REQ_CPD'];
+                // $jteras = $ttlReqCpdTr['REQ_CPD'];
+                $jteras = $ttlReqCpdTr->REQ_CPD;
             } else {
                 $jteras = 0;
             }
@@ -2154,7 +2181,8 @@ class Cpd extends MY_Controller
             // TOTAL UMUM COMPETENCY
             $ttlUmComp = $this->mdl_cpd->getTtlCpdByCom($sid, $sys_yyyy, $comp2);
             if (!empty($ttlUmComp)) {
-                $total_jumum = $ttlUmComp['TTL_CPD'];
+                // $total_jumum = $ttlUmComp['TTL_CPD'];
+                $total_jumum = $ttlUmComp->TTL_CPD;
             } else {
                 $total_jumum = 0;
             }
@@ -2162,7 +2190,8 @@ class Cpd extends MY_Controller
             // TOTAL TERAS COMPETENCY
             $ttlTrComp = $this->mdl_cpd->getTtlCpdByCom($sid, $sys_yyyy, $comp3);
             if (!empty($ttlTrComp)) {
-                $total_jteras = $ttlTrComp['TTL_CPD'];
+                // $total_jteras = $ttlTrComp['TTL_CPD'];
+                $total_jteras = $ttlTrComp->TTL_CPD;
             } else {
                 $total_jteras = 0;
             }
@@ -2170,7 +2199,8 @@ class Cpd extends MY_Controller
             // TOTAL TERAS COMPETENCY
             $ttlKhuComp = $this->mdl_cpd->getTtlCpdByCom($sid, $sys_yyyy, $comp1);
             if (!empty($ttlKhuComp)) {
-                $total_jkhu = $ttlKhuComp['TTL_CPD'];
+                // $total_jkhu = $ttlKhuComp['TTL_CPD'];
+                $total_jkhu = $ttlKhuComp->TTL_CPD;
             } else {
                 $total_jkhu = 0;
             }
@@ -2377,7 +2407,7 @@ class Cpd extends MY_Controller
                     $ttlReqCpdKhu = $this->mdl_cpd->getTtlReqCpd($sid, $sys_yyyy, $comp1);
                     if (!empty($ttlReqCpdKhu)) {
                         // $jkhu = $ttlReqCpdKhu['REQ_CPD'];
-                        $jkhu = (float)$ttlReqCpdKhu['REQ_CPD'];
+                        $jkhu = (float)$ttlReqCpdKhu->REQ_CPD;
                     } else {
                         $jkhu = 0;
                     }
@@ -2385,7 +2415,8 @@ class Cpd extends MY_Controller
                     // CPD UMUM
                     $ttlReqCpdUm = $this->mdl_cpd->getTtlReqCpd($sid, $sys_yyyy, $comp2);
                     if (!empty($ttlReqCpdUm)) {
-                        $jumum = (float)$ttlReqCpdUm['REQ_CPD'];
+                        //$jumum = (float)$ttlReqCpdUm['REQ_CPD'];
+                        $jumum = (float)$ttlReqCpdUm->REQ_CPD;
                     } else {
                         $jumum = 0;
                     }
@@ -2394,7 +2425,7 @@ class Cpd extends MY_Controller
                     $ttlReqCpdTr = $this->mdl_cpd->getTtlReqCpd($sid, $sys_yyyy, $comp3);
                     if (!empty($ttlReqCpdTr)) {
                         // $jteras = $ttlReqCpdTr['REQ_CPD'];
-                        $jteras = (float)$ttlReqCpdTr['REQ_CPD'];
+                        $jteras = (float)$ttlReqCpdTr->REQ_CPD;
                     } else {
                         $jteras = 0;
                     }
@@ -2403,7 +2434,7 @@ class Cpd extends MY_Controller
                     $ttlUmComp = $this->mdl_cpd->getTtlCpdByCom($sid, $sys_yyyy, $comp2);
                     if (!empty($ttlUmComp)) {
                         // $total_jumum = $ttlUmComp['TTL_CPD'];
-                        $total_jumum = (float)$ttlUmComp['TTL_CPD'];
+                        $total_jumum = (float)$ttlUmComp->TTL_CPD;
                     } else {
                         $total_jumum = 0;
                     }
@@ -2412,7 +2443,7 @@ class Cpd extends MY_Controller
                     $ttlTrComp = $this->mdl_cpd->getTtlCpdByCom($sid, $sys_yyyy, $comp3);
                     if (!empty($ttlTrComp)) {
                         // $total_jteras = $ttlTrComp['TTL_CPD'];
-                        $total_jteras = (float)$ttlTrComp['TTL_CPD'];
+                        $total_jteras = (float)$ttlTrComp->TTL_CPD;
                     } else {
                         $total_jteras = 0;
                     }
@@ -2421,7 +2452,7 @@ class Cpd extends MY_Controller
                     $ttlKhuComp = $this->mdl_cpd->getTtlCpdByCom($sid, $sys_yyyy, $comp1);
                     if (!empty($ttlKhuComp)) {
                         // $total_jkhu = $ttlKhuComp['TTL_CPD'];
-                        $total_jkhu = (float)$ttlKhuComp['TTL_CPD'];
+                        $total_jkhu = (float)$ttlKhuComp->TTL_CPD;
                     } else {
                         $total_jkhu = 0;
                     }

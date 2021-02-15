@@ -58,13 +58,13 @@ class Cpd_model extends MY_Model
         }
     }
 
-    // get current date
+    // get current date -postgres
     public function getCurDate() {		
-        $this->db->select("TO_CHAR(SYSDATE, 'MM') AS SYSDATE_MM, TO_CHAR(SYSDATE, 'YYYY') AS SYSDATE_YYYY");
-        $this->db->from("DUAL");
+        $this->db->select("TO_CHAR(current_date, 'MM') AS sysdate_mm, TO_CHAR(current_date, 'YYYY') AS sysdate_yyyy");
+        //$this->db->from("DUAL");
         $q = $this->db->get();
                 
-        return $q->row();
+        return $q->row_case('UPPER');
     } 
     
     /*===============================================================
@@ -586,58 +586,70 @@ class Cpd_model extends MY_Model
         return $this->db->update("STAFF_CONFERENCE_MAIN", $data);
     }
 
-    // CPD POINT INFO
+    // CPD POINT INFO -postgres
     public function getCpdPointInfo($sid)
     {  
-        $this->db->select("SCH_JUM_CPD, SCH_CPD_LAYAK, CP_LNPT_WEIGHTAGE, SCH_JUM_KHUSUS_MIN, SCH_JUM_UMUM_MIN, SCH_JUM_KHUSUS, SCH_JUM_UMUM, SCH_JUM_TERAS_MIN, SCH_JUM_TERAS, CP_UMUM_MANDATORY, SCH_PRORATE_SERVICE");
-        $this->db->from("STAFF_CPD_HEAD, CPD_POINT");
-        $this->db->where("SCH_TAHUN = CP_YEAR");
-        $this->db->where("SCH_KUMP = CP_SCHEME");
-        $this->db->where("SCH_TAHUN = TO_CHAR(SYSDATE,'YYYY')");
-        $this->db->where("SCH_STAFF_ID", $sid);
+        $this->db->select("sch_jum_cpd, sch_cpd_layak, cp_lnpt_weightage, sch_jum_khusus_min, sch_jum_umum_min, sch_jum_khusus, sch_jum_umum, sch_jum_teras_min, sch_jum_teras, cp_umum_mandatory, sch_prorate_service");
+        $this->db->from("ims_hris.staff_cpd_head, ims_hris.cpd_point");
+        $this->db->where("sch_tahun = cp_year");
+        $this->db->where("sch_kump = cp_scheme");
+        $this->db->where("sch_tahun = to_char(current_date,'YYYY')");
+        $this->db->where("sch_staff_id", $sid);
         // $this->db->where("SCH_STAFF_ID = 'K02284'");
         $q = $this->db->get();
     
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // JKHU/JUMUM/JTERAS
+    // JKHU/JUMUM/JTERAS -postgres
     public function getTtlReqCpd($sid, $sys_yyyy, $comp) {
 		$req_cpd = null;
 		
-		$sql = oci_parse($this->db->conn_id, "begin :bindOutput1 := CPD.total_required_cpd(:bind1,:bind2,:bind3); end;");
-		oci_bind_by_name($sql, ":bind1", $sid, 10);	        //IN
-		oci_bind_by_name($sql, ":bind2", $sys_yyyy, 4);			//IN
-		oci_bind_by_name($sql, ":bind3", $comp, 6);			//IN
-		oci_bind_by_name($sql, ":bindOutput1", $req_cpd, 6);				//OUT
-		oci_execute($sql, OCI_DEFAULT); 
+		// $sql = oci_parse($this->db->conn_id, "begin :bindOutput1 := CPD.total_required_cpd(:bind1,:bind2,:bind3); end;");
+		// oci_bind_by_name($sql, ":bind1", $sid, 10);	        //IN
+		// oci_bind_by_name($sql, ":bind2", $sys_yyyy, 4);			//IN
+		// oci_bind_by_name($sql, ":bind3", $comp, 6);			//IN
+		// oci_bind_by_name($sql, ":bindOutput1", $req_cpd, 6);				//OUT
+		// oci_execute($sql, OCI_DEFAULT); 
 		
-        $data = array(
-            'REQ_CPD' => $req_cpd
-        );
+        // $data = array(
+        //     'REQ_CPD' => $req_cpd
+        // );
 		
-		return $data;	
+        // return $data;	
+        
+        $sql = 'select cpd_total_required_cpd as req_cpd
+                from ims_hris.cpd_total_required_cpd(?,?,?)';
+
+        $q = $this->db->query($sql, array($sid, $sys_yyyy, $comp));
+        return $q->row_case('UPPER');
     }
 
     // TOTAL CPD BY COMPETENCY
     public function getTtlCpdByCom($sid, $sys_yyyy, $comp) {
 		$total = null;
 		
-		$sql = oci_parse($this->db->conn_id, "begin :bindOutput1 := CPD.total_cpd_by_competency(:bind1,:bind2,:bind3); end;");
-		oci_bind_by_name($sql, ":bind1", $sid, 10);	        //IN
-		oci_bind_by_name($sql, ":bind2", $sys_yyyy, 4);			//IN
-		oci_bind_by_name($sql, ":bind3", $comp, 6);			//IN
-		oci_bind_by_name($sql, ":bindOutput1", $total, 6);				//OUT
-		oci_execute($sql, OCI_DEFAULT); 
+		// $sql = oci_parse($this->db->conn_id, "begin :bindOutput1 := CPD.total_cpd_by_competency(:bind1,:bind2,:bind3); end;");
+		// oci_bind_by_name($sql, ":bind1", $sid, 10);	        //IN
+		// oci_bind_by_name($sql, ":bind2", $sys_yyyy, 4);			//IN
+		// oci_bind_by_name($sql, ":bind3", $comp, 6);			//IN
+		// oci_bind_by_name($sql, ":bindOutput1", $total, 6);				//OUT
+		// oci_execute($sql, OCI_DEFAULT); 
 		
-        $data = array(
-            'TTL_CPD' => $total
-        );
+        // $data = array(
+        //     'TTL_CPD' => $total
+        // );
 		
-		return $data;	
+        // return $data;	
+        
+        $sql = 'select cpd_total_cpd_by_competency as ttl_cpd
+                from ims_hris.cpd_total_cpd_by_competency(?,?,?)';
+
+        $q = $this->db->query($sql, array($sid, $sys_yyyy, $comp));
+        return $q->row_case('UPPER');
     }
 
-    // UPDATE LNPT INFO
+    // UPDATE LNPT INFO -postgres
     public function updLnptInfo($sid, $jkhu, $jumum, $jteras, $jum_cpd, $lnptweightage, $res, $sys_yyyy)
     {
         if(empty($jkhu)) {
@@ -659,18 +671,18 @@ class Cpd_model extends MY_Model
         $res2 = round($res, 2);
 
         $data = array(
-            "SCH_JUM_KHUSUS" => round($jkhu, 2),
-            "SCH_JUM_UMUM" => round($jumum, 2),
-            "SCH_JUM_TERAS" => round($jteras, 2),
-            "SCH_JUM_CPD" => round($jum_cpd, 2),
-            "SCH_PEMBERAT_LPP" => round($lnptweightage, 2),
-            "SCH_PERATUS_LPP" => round($res2, 2),
+            "sch_jum_khusus" => round($jkhu, 2),
+            "sch_jum_umum" => round($jumum, 2),
+            "sch_jum_teras" => round($jteras, 2),
+            "sch_jum_cpd" => round($jum_cpd, 2),
+            "sch_pemberat_lpp" => round($lnptweightage, 2),
+            "sch_peratus_lpp" => round($res2, 2),
         );
 
-        $this->db->where("SCH_STAFF_ID", $sid);
-        $this->db->where("SCH_TAHUN", $sys_yyyy);
+        $this->db->where("sch_staff_id", $sid);
+        $this->db->where("sch_tahun", $sys_yyyy);
 
-        return $this->db->update("STAFF_CPD_HEAD", $data);
+        return $this->db->update("ims_hris.staff_cpd_head", $data);
     }
 
     // STAFF CPD DETL
@@ -1231,243 +1243,249 @@ class Cpd_model extends MY_Model
        UPDATE CPD INFO - ATF123
     ================================================================*/
 
-    // TRAINING INFO
+    // TRAINING INFO -postgres
     public function getTrainingDetl($refid)
     {  
-        $this->db->select("TH_REF_ID, TH_TRAINING_TITLE, TH_TRAINING_CODE, 
-        TO_CHAR(TH_DATE_FROM, 'DD/MM/YYYY') AS TH_DATE_FROM, TO_CHAR(TH_DATE_TO, 'DD/MM/YYYY') AS TH_DATE_TO, 
-        CH_COMPETENCY, CH_MARK, 
-        CASE THD_EVALUATION
+        $this->db->select("th_ref_id, th_training_title, th_training_code, 
+        to_char(th_date_from, 'dd/mm/yyyy') as th_date_from, to_char(th_date_to, 'dd/mm/yyyy') as th_date_to, 
+        ch_competency, ch_mark, 
+        CASE thd_evaluation
         WHEN 'Y' THEN 'Yes'
         ELSE 'No'
-        END AS THD_EVALUATION_DESC, TH_GENERATE_CPD");
-        $this->db->from("TRAINING_HEAD");
-        $this->db->join("CPD_HEAD", "CH_TRAINING_REFID = TH_REF_ID", "LEFT");
-        $this->db->join("TRAINING_HEAD_DETL", "THD_REF_ID = TH_REF_ID", "LEFT");
-        $this->db->where("TH_REF_ID", $refid);
+        END AS thd_evaluation_desc, th_generate_cpd");
+        $this->db->from("ims_hris.training_head");
+        $this->db->join("ims_hris.cpd_head", "ch_training_refid = th_ref_id", "left");
+        $this->db->join("ims_hris.training_head_detl", "thd_ref_id = th_ref_id", "left");
+        $this->db->where("th_ref_id", $refid);
         $q = $this->db->get();
     
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // STAFF CPD MARK LIST
+    // STAFF CPD MARK LIST -postgres
     public function getStaffTrCpd($refid) { 
 
-        $query = "SELECT STH_STAFF_ID, SM_STAFF_NAME, SM_DEPT_CODE, TPR_DESC, STH_STATUS, STH_CPD_MARK, STH_CPD_COMPETENCY, STH_HOD_EVALUATION, CASE STH_HOD_EVALUATION
+        $query = "SELECT sth_staff_id, sm_staff_name, sm_dept_code, tpr_desc, sth_status, sth_cpd_mark, sth_cpd_competency, sth_hod_evaluation, CASE sth_hod_evaluation
         WHEN 'Y' THEN 'Yes'
         WHEN 'N' THEN 'No'
-        END AS STH_HOD_EVALUATION_DESC
-        FROM STAFF_TRAINING_HEAD
-        LEFT JOIN STAFF_MAIN ON STH_STAFF_ID = SM_STAFF_ID
-        LEFT JOIN TRAINING_PARTICIPANT_ROLE ON TPR_CODE = STH_PARTICIPANT_ROLE
-        WHERE STH_TRAINING_REFID = '$refid'
-        AND STH_STAFF_ID IN 
+        END AS sth_hod_evaluation_desc
+        FROM ims_hris.staff_training_head
+        left join ims_hris.staff_main on sth_staff_id = sm_staff_id
+        left join ims_hris.training_participant_role on tpr_code = sth_participant_role
+        where sth_training_refid = '$refid'
+        and sth_staff_id in 
         (
-        SELECT STH_STAFF_ID
-        FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-        WHERE STH_STATUS = 'APPROVE'
-        AND STH_TRAINING_REFID = TH_REF_ID
-        AND STH_TRAINING_REFID = '$refid'
-        AND TO_CHAR(TH_DATE_FROM,'yyyy') < '2016'
-        AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
-        UNION
-        SELECT STH_STAFF_ID
-        FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-        WHERE STH_STATUS = 'APPROVE'
-        AND STH_TRAINING_REFID = TH_REF_ID
-        AND STH_TRAINING_REFID = '$refid'
-        AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
-        UNION
-        SELECT STD_STAFF_ID 
-        FROM STAFF_TRAINING_DETL,TRAINING_HEAD,STAFF_TRAINING_HEAD
-        WHERE NVL(STD_ATTEND,'N') IN ('Y','A')
-        AND STD_TRAINING_REFID = '$refid'
-        AND STH_STATUS = 'APPROVE'
-        AND STH_TRAINING_REFID = STD_TRAINING_REFID
-        AND STH_TRAINING_REFID = TH_REF_ID
-        AND STH_STAFF_ID = STD_STAFF_ID
-        AND TO_CHAR(TH_DATE_FROM,'yyyy') >= '2016'
-        AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
+        select sth_staff_id
+        from ims_hris.staff_training_head,ims_hris.training_head
+        where sth_status = 'APPROVE'
+        and sth_training_refid = th_ref_id
+        and sth_training_refid = '$refid'
+        and to_char(th_date_from,'yyyy') < '2016'
+        and th_internal_external <> 'EXTERNAL_AGENCY'
+        union
+        select sth_staff_id
+        from ims_hris.staff_training_head,ims_hris.training_head
+        where sth_status = 'APPROVE'
+        and sth_training_refid = th_ref_id
+        and sth_training_refid = '$refid'
+        and th_internal_external = 'EXTERNAL_AGENCY'
+        union
+        select std_staff_id 
+        from ims_hris.staff_training_detl,ims_hris.training_head,ims_hris.staff_training_head
+        where coalesce(std_attend,'N') IN ('Y','A')
+        and std_training_refid = '$refid'
+        and sth_status = 'APPROVE'
+        and sth_training_refid = std_training_refid
+        and sth_training_refid = th_ref_id
+        and sth_staff_id = std_staff_id
+        and TO_CHAR(th_date_from,'yyyy') >= '2016'
+        and th_internal_external <> 'EXTERNAL_AGENCY'
         )
-        ORDER BY STH_STAFF_ID, UPPER(GET_STAFF_DEPT(STH_STAFF_ID)), STH_STATUS, UPPER(GET_STAFF_NAME(STH_STAFF_ID))";
+        order by sth_staff_id, upper(ims_hris.get_staff_dept(sth_staff_id)), sth_status, upper(ims_hris.get_staff_name(sth_staff_id))";
 
         $q = $this->db->query($query);
-        return $q->result();
+        return $q->result_case('UPPER');
     }
 
-    // UPDATE TR CPD INFO STAFF
+    // UPDATE TR CPD INFO STAFF -postgres
     public function updateTrCpd($refid, $staff_id)
     {  
-        $this->db->select("STH_STAFF_ID, STH_CPD_MARK, STH_CPD_COMPETENCY");
-        $this->db->from("STAFF_TRAINING_HEAD");
-        $this->db->where("STH_TRAINING_REFID", $refid);
-        $this->db->where("STH_STAFF_ID", $staff_id);
+        $this->db->select("sth_staff_id, sth_cpd_mark, sth_cpd_competency");
+        $this->db->from("ims_hris.staff_training_head");
+        $this->db->where("sth_training_refid", $refid);
+        $this->db->where("sth_staff_id", $staff_id);
         $q = $this->db->get();
     
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // EVALUATION START DATE
+    // EVALUATION START DATE -postgres
     public function getEvaStart()
     {  
-        $this->db->select("HP_PARM_DESC, TO_CHAR(SYSDATE, 'YYYY') CURR_YEAR");
-        $this->db->from("HRADMIN_PARMS");
-        $this->db->where("HP_PARM_CODE = 'TRAINING_EVALUATION_STARTED'");
-        $this->db->where("HP_PARM_NO = 1");
+        $this->db->select("hp_parm_desc, to_char(current_date, 'yyyy') curr_year");
+        $this->db->from("ims_hris.hradmin_parms");
+        $this->db->where("hp_parm_code = 'TRAINING_EVALUATION_STARTED'");
+        $this->db->where("hp_parm_no = 1");
         $q = $this->db->get();
     
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // EVALUATION START DATE
+    // EVALUATION START DATE -postgres
     public function getCountTrDetl($refid)
     {  
-        $this->db->select("COUNT(1) COUNT_G");
-        $this->db->from("TRAINING_HEAD_DETL");
-        $this->db->where("NVL(THD_EVALUATION,'N') = 'Y'");
-        $this->db->where("THD_REF_ID", $refid);
+        $this->db->select("count(1) count_g");
+        $this->db->from("ims_hris.training_head_detl");
+        $this->db->where("coalesce(thd_evaluation,'N') = 'Y'");
+        $this->db->where("thd_ref_id", $refid);
         $q = $this->db->get();
     
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // EVALUATION START DATE
+    // EVALUATION START DATE -postgres
     public function getSthDetl($refid, $staff_id)
     {  
-        $this->db->select("NVL(STH_HOD_EVALUATION,'N') STH_HOD_EVALUATION");
-        $this->db->from("STAFF_TRAINING_HEAD");
-        $this->db->where("STH_STAFF_ID", $staff_id);
-        $this->db->where("STH_TRAINING_REFID", $refid);
+        $this->db->select("coalesce(sth_hod_evaluation,'N') sth_hod_evaluation");
+        $this->db->from("ims_hris.staff_training_head");
+        $this->db->where("sth_staff_id", $staff_id);
+        $this->db->where("sth_training_refid", $refid);
         $q = $this->db->get();
     
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // SAVE CPD MARK INFO STAFF
+    // SAVE CPD MARK INFO STAFF -postgress
     public function saveStaffUpdateCpdMark($form)
     {
         $data = array(
-            "STH_CPD_MARK" => $form['mark'],
-            "STH_CPD_COMPETENCY" => $form['competency']
+            // "sth_cpd_mark" => $form['mark'],
+            "sth_cpd_competency" => $form['competency']
         );
 
-        $this->db->where("STH_STAFF_ID", $form['staff_id']);
-        $this->db->where("STH_TRAINING_REFID", $form['refid']);
+        if(!empty($form['mark'])){
+            $this->db->set("sth_cpd_mark", $form['mark'], false);
+        } else {
+            $this->db->set("sth_cpd_mark", NULL, true);
+        }
 
-        return $this->db->update("STAFF_TRAINING_HEAD", $data);
+        $this->db->where("sth_staff_id", $form['staff_id']);
+        $this->db->where("sth_training_refid", $form['refid']);
+
+        return $this->db->update("ims_hris.staff_training_head", $data);
     }
 
-    // STAFF CPD MARK LIST
+    // STAFF CPD MARK LIST -postgres
     public function getStaffGenMark($refid, $eva_start_dt) { 
 
-        $query = "SELECT STH_STAFF_ID
-		FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-		WHERE STH_STATUS = 'APPROVE'
-		AND STH_TRAINING_REFID = TH_REF_ID
+        $query = "SELECT sth_staff_id
+		FROM ims_hris.staff_training_head,ims_hris.training_head
+		WHERE sth_status = 'APPROVE'
+		AND sth_training_refid = th_ref_id
 		AND STH_TRAINING_REFID = '$refid'
-		AND TO_CHAR(TH_DATE_FROM,'yyyy') < '2016'
-		AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
+		AND TO_CHAR(th_date_from,'yyyy') < '2016'
+		AND th_internal_external <> 'EXTERNAL_AGENCY'
 		UNION
-		SELECT STH_STAFF_ID
-		FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-		WHERE STH_STATUS = 'APPROVE'
-		AND STH_TRAINING_REFID = TH_REF_ID
-		AND STH_TRAINING_REFID = '$refid'
-		AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
-		AND TH_DATE_FROM < TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
+		SELECT sth_staff_id
+		FROM ims_hris.staff_training_head,ims_hris.training_head
+		WHERE sth_status = 'APPROVE'
+		AND sth_training_refid = th_ref_id
+		AND sth_training_refid = '$refid'
+		AND th_internal_external = 'EXTERNAL_AGENCY'
+		AND th_date_from < TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
 		UNION
-		SELECT STH_STAFF_ID
-		FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-		WHERE STH_STATUS = 'APPROVE'
-		AND STH_TRAINING_REFID = TH_REF_ID
-		AND STH_TRAINING_REFID = '$refid'
-		AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
-		AND TH_DATE_FROM >= TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
-		AND NVL(STH_HOD_EVALUATION,'N') = 'Y'
-		AND TH_REF_ID IN (SELECT THD_REF_ID
-		FROM TRAINING_HEAD_DETL
-		WHERE NVL(THD_EVALUATION,'N') = 'Y')
+		SELECT sth_staff_id
+		FROM ims_hris.staff_training_head,ims_hris.training_head
+		WHERE sth_status = 'APPROVE'
+		AND sth_training_refid = th_ref_id
+		AND sth_training_refid = '$refid'
+		AND th_internal_external = 'EXTERNAL_AGENCY'
+		AND th_date_from >= TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
+		AND coalesce(sth_hod_evaluation,'N') = 'Y'
+		AND th_ref_id IN (SELECT thd_ref_id
+		FROM ims_hris.TRAINING_HEAD_DETL
+		WHERE coalesce(thd_evaluation,'N') = 'Y')
 		UNION
-		SELECT STH_STAFF_ID
-		FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-		WHERE STH_STATUS = 'APPROVE'
-		AND STH_TRAINING_REFID = TH_REF_ID
-		AND STH_TRAINING_REFID = '$refid'
-		AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
-		AND TH_DATE_FROM >= TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
-		AND TH_REF_ID NOT IN (SELECT THD_REF_ID
-		FROM TRAINING_HEAD_DETL
-		WHERE NVL(THD_EVALUATION,'N') = 'Y')
+		SELECT sth_staff_id
+		FROM ims_hris.staff_training_head,ims_hris.training_head
+		WHERE sth_status = 'APPROVE'
+		AND sth_training_refid = th_ref_id
+		AND sth_training_refid = '$refid'
+		AND th_internal_external = 'EXTERNAL_AGENCY'
+		AND th_date_from >= TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
+		AND th_ref_id NOT IN (SELECT thd_ref_id
+		FROM ims_hris.training_head_detl
+		WHERE coalesce(thd_evaluation,'N') = 'Y')
 		UNION
-		SELECT STD_STAFF_ID 
-		FROM STAFF_TRAINING_DETL,TRAINING_HEAD,STAFF_TRAINING_HEAD
-		WHERE NVL(STD_ATTEND,'N') IN ('Y','A')
-		AND STD_TRAINING_REFID = '$refid'
-		AND STH_STATUS = 'APPROVE'
-		AND STH_TRAINING_REFID = STD_TRAINING_REFID
-		AND STH_TRAINING_REFID = TH_REF_ID
-		AND STH_STAFF_ID = STD_STAFF_ID
-		AND (TO_CHAR(TH_DATE_FROM,'yyyy') >= '2016' 
-		AND TO_CHAR(TH_DATE_FROM,'yyyy') < '2018')
-		AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
+		SELECT std_staff_id 
+		FROM ims_hris.staff_training_detl,ims_hris.training_head,ims_hris.staff_training_head
+		WHERE coalesce(std_attend,'N') IN ('Y','A')
+		AND std_training_refid = '$refid'
+		AND sth_status = 'APPROVE'
+		AND sth_training_refid = std_training_refid
+		AND sth_training_refid = th_ref_id
+		AND sth_staff_id = std_staff_id
+		AND (TO_CHAR(th_date_from,'yyyy') >= '2016' 
+		AND TO_CHAR(th_date_from,'yyyy') < '2018')
+		AND th_internal_external <> 'EXTERNAL_AGENCY'
 		UNION
-		SELECT STD_STAFF_ID 
-		FROM STAFF_TRAINING_DETL,TRAINING_HEAD,STAFF_TRAINING_HEAD
-		WHERE NVL(STD_ATTEND,'N') IN ('Y','A')
-		AND STD_TRAINING_REFID = '$refid'
-		AND STH_STATUS = 'APPROVE'
-		AND STH_TRAINING_REFID = STD_TRAINING_REFID
-		AND STH_TRAINING_REFID = TH_REF_ID
-		AND STH_STAFF_ID = STD_STAFF_ID
-		AND TH_DATE_FROM >= TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
-		AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
-		AND NVL(STH_HOD_EVALUATION,'N') = 'Y'
-		AND TH_REF_ID IN (SELECT THD_REF_ID
-		FROM TRAINING_HEAD_DETL
-		WHERE NVL(THD_EVALUATION,'N') = 'Y')
+		SELECT std_staff_id 
+		FROM ims_hris.staff_training_detl,ims_hris.training_head,ims_hris.staff_training_head
+		WHERE coalesce(std_attend,'N') IN ('Y','A')
+		AND std_training_refid = '$refid'
+		AND sth_status = 'APPROVE'
+		AND sth_training_refid = std_training_refid
+		AND sth_training_refid = th_ref_id
+		AND sth_staff_id = std_staff_id
+		AND th_date_from >= TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
+		AND th_internal_external <> 'EXTERNAL_AGENCY'
+		AND coalesce(sth_hod_evaluation,'N') = 'Y'
+		AND th_ref_id IN (SELECT thd_ref_id
+		FROM ims_hris.training_head_detl
+		WHERE coalesce(thd_evaluation,'N') = 'Y')
 		UNION
-		SELECT STD_STAFF_ID 
-		FROM STAFF_TRAINING_DETL,TRAINING_HEAD,STAFF_TRAINING_HEAD
-		WHERE NVL(STD_ATTEND,'N') IN ('Y','A')
-		AND STD_TRAINING_REFID = '$refid'
-		AND STH_STATUS = 'APPROVE'
-		AND STH_TRAINING_REFID = STD_TRAINING_REFID
-		AND STH_TRAINING_REFID = TH_REF_ID
-		AND STH_STAFF_ID = STD_STAFF_ID
-		AND TH_DATE_FROM >= TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
-		AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
-		AND TH_REF_ID NOT IN (SELECT THD_REF_ID
-		FROM TRAINING_HEAD_DETL
-		WHERE NVL(THD_EVALUATION,'N') = 'Y')";
+		SELECT std_staff_id 
+		FROM ims_hris.staff_training_detl,ims_hris.training_head,ims_hris.staff_training_head
+		WHERE coalesce(std_attend,'N') IN ('Y','A')
+		AND std_training_refid = '$refid'
+		AND sth_status = 'APPROVE'
+		AND sth_training_refid = std_training_refid
+		AND sth_training_refid = th_ref_id
+		AND sth_staff_id = std_staff_id
+		AND th_date_from >= TO_DATE('$eva_start_dt', 'DD/MM/YYYY')
+		AND th_internal_external <> 'EXTERNAL_AGENCY'
+		AND th_ref_id NOT IN (SELECT thd_ref_id
+		FROM ims_hris.training_head_detl
+		WHERE coalesce(thd_evaluation,'N') = 'Y')";
 
         $q = $this->db->query($query);
-        return $q->result();
+        return $q->result_case('UPPER');
     }
 
-    // UPDATE GENERATE CPD MARK
+    // UPDATE GENERATE CPD MARK -postgres
     public function generateCpdMark($refid, $sid, $competency, $mark)
     {
         $data = array(
-            "STH_CPD_COMPETENCY" => $competency,
-            "STH_CPD_MARK" => $mark
+            "sth_cpd_competency" => $competency,
+            "sth_cpd_mark" => $mark
         );
 
-        $this->db->where("STH_STAFF_ID", $sid);
-        $this->db->where("STH_TRAINING_REFID", $refid);
+        $this->db->where("sth_staff_id", $sid);
+        $this->db->where("sth_training_refid", $refid);
 
-        return $this->db->update("STAFF_TRAINING_HEAD", $data);
+        return $this->db->update("ims_hris.staff_training_head", $data);
     }
 
-    // UPDATE GENERATE CPD TRAINING HEAD
+    // UPDATE GENERATE CPD TRAINING HEAD -postgres
     public function updThGenCpd($refid)
     {
         $data = array(
-            "TH_GENERATE_CPD" => 'Y',
+            "th_generate_cpd" => 'Y',
         );
 
-        $this->db->where("TH_REF_ID", $refid);
+        $this->db->where("th_ref_id", $refid);
 
-        return $this->db->update("TRAINING_HEAD", $data);
+        return $this->db->update("ims_hris.training_head", $data);
     }
 
     /*===============================================================
@@ -1805,223 +1823,223 @@ class Cpd_model extends MY_Model
        UPDATE 09/09/2020
     ================================================================*/
     
-    // GET CURRENT DEFAULT USER DEPARTMENT - STAFF MAIN
+    // GET CURRENT DEFAULT USER DEPARTMENT - STAFF MAIN -postgres
     public function getCurUserDept($staffID = null) 
     {
 
         $curUsername = $this->username;
 
-        $this->db->select("SM_STAFF_ID, SM_STAFF_NAME, SM_DEPT_CODE, SM_EMAIL_ADDR");
-        $this->db->from("STAFF_MAIN");
+        $this->db->select("sm_staff_id, sm_staff_name, sm_dept_code, sm_email_addr");
+        $this->db->from("ims_hris.staff_main");
 
 
 
         if(empty($staffID)) {
-            $this->db->where("SM_APPS_USERNAME", $curUsername);
+            $this->db->where("sm_apps_username", $curUsername);
         } else {
-            $this->db->where("SM_STAFF_ID", $staffID);
+            $this->db->where("sm_staff_id", $staffID);
         }
         
         $q = $this->db->get();
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // GET CURRENT DEFAULT YEAR
+    // GET CURRENT DEFAULT YEAR -postgres
     public function getCurYear() 
     {
-        $this->db->select("to_char(SYSDATE, 'YYYY') AS CUR_YEAR");
+        $this->db->select("to_char(current_date, 'YYYY') as cur_year");
         
-        $this->db->from("DUAL");
+        //$this->db->from("DUAL");
         
         $q = $this->db->get();
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
-    // GET DEPARTMENT LIST
+    // GET DEPARTMENT LIST -postgres
     public function getDeptList2() 
     {
-        $this->db->select("DM_DEPT_CODE, DM_DEPT_DESC, DM_DEPT_CODE ||' - '|| DM_DEPT_DESC AS DEPT_CODE_DESC");
-        $this->db->from('DEPARTMENT_MAIN');
-		$this->db->where('NVL(DM_STATUS,\'INACTIVE\')', 'ACTIVE');
-		$this->db->where('DM_LEVEL <= 2');
-        $this->db->order_by('DM_DEPT_CODE');
+        $this->db->select("dm_dept_code, dm_dept_desc, dm_dept_code ||' - '|| dm_dept_desc as dept_code_desc");
+        $this->db->from('ims_hris.department_main');
+		$this->db->where('coalesce(dm_status,\'INACTIVE\')', 'ACTIVE');
+		$this->db->where('dm_level <= 2');
+        $this->db->order_by('dm_dept_code');
         $q = $this->db->get();
 		        
-        return $q->result();
+        return $q->result_case('UPPER');
     }
 
-    // GET YEAR DROPDOWN
+    // GET YEAR DROPDOWN -postgres
     public function getYearList() 
     {		
-        $this->db->select("to_char(CM_DATE, 'YYYY') AS CM_YEAR");
-        $this->db->from("CALENDAR_MAIN");
-		$this->db->where("to_char(CM_DATE, 'YYYY') >= to_char(SYSDATE, 'YYYY') - 15");
-        $this->db->group_by("to_char(CM_DATE, 'YYYY')");
-        $this->db->order_by("to_char(CM_DATE, 'YYYY') DESC");
+        $this->db->select("to_char(cm_date, 'YYYY') AS cm_year");
+        $this->db->from("ims_hris.calendar_main");
+		$this->db->where("to_char(cm_date, 'YYYY')::numeric >= to_char(current_date, 'YYYY')::numeric - 15");
+        $this->db->group_by("to_char(cm_date, 'YYYY')");
+        $this->db->order_by("to_char(cm_date, 'YYYY') DESC");
         $q = $this->db->get();
 		        
-        return $q->result();
+        return $q->result_case('UPPER');
     } 
 
-    // GET MONTH DROPDOWN
+    // GET MONTH DROPDOWN -postgres
     public function getMonthList() 
     {		
-        $this->db->select("to_char(CM_DATE, 'MM') AS CM_MM, to_char(CM_DATE, 'MONTH') AS CM_MONTH");
-        $this->db->from("CALENDAR_MAIN");
-        $this->db->group_by("to_char(CM_DATE,'MM'), to_char(CM_DATE, 'MONTH')");
-        $this->db->order_by("to_char(CM_DATE, 'MM')");
+        $this->db->select("to_char(cm_date, 'MM') AS cm_mm, to_char(cm_date, 'MONTH') AS cm_month");
+        $this->db->from("ims_hris.calendar_main");
+        $this->db->group_by("to_char(cm_date,'MM'), to_char(cm_date, 'MONTH')");
+        $this->db->order_by("to_char(cm_date, 'MM')");
         $q = $this->db->get();
 		        
-        return $q->result();
+        return $q->result_case('UPPER');
     } 
 
-    // GET TRAINING HEAD BASED ON FILTER
+    // GET TRAINING HEAD BASED ON FILTER -postgres
     public function getTrainingList2($defIntExt = null, $curUsrDept = null, $defMonth = null, $curYear = null, $defTrSts = null, $evaluation = null, $screRpt = null)
     {
         if($screRpt == '1') {
-            $this->db->select("TH_REF_ID, 
-                                TH_TRAINING_TITLE, 
-                                TH_TRAINING_DESC, 
-                                TH_TYPE, 
-                                TH_STATUS, 
-                                TH_INTERNAL_EXTERNAL,
-                                TH_LEVEL, 
-                                TH_TRAINING_VENUE, 
-                                TH_TRAINING_COUNTRY, 
-                                TH_ORGANIZER_NAME, 
-                                TH_ORGANIZER_LEVEL, 
-                                TH_ORGANIZER_ADDRESS,
-                                TH_ORGANIZER_POSTCODE, 
-                                TH_ORGANIZER_CITY, 
-                                TH_ORGANIZER_STATE, 
-                                TH_ORGANIZER_COUNTRY, 
-                                TH_SPONSOR, 
-                                to_char(TH_DATE_FROM, 'DD/MM/YYYY') AS TH_DATE_FROM,
-                                to_char(TH_DATE_TO, 'DD/MM/YYYY') AS TH_DATE_TO, 
-                                TH_TOTAL_HOURS, 
-                                TH_TRAINING_FEE, 
-                                to_char(TH_APPLY_CLOSING_DATE, 'DD-MM-YYYY') AS TH_APP_CLOSING_DATE, 
-                                TH_CURRENT_PARTICIPANT, 
-                                TH_MAX_PARTICIPANT,
-                                TH_OPEN, 
-                                TH_DEPT_CODE, 
-                                TH_ENTER_BY, 
-                                TH_ENTER_DATE, 
-                                TH_APPROVE_BY, 
-                                TH_APPROVE_DATE, 
-                                TH_TRAINING_STATE, 
-                                TH_ATTENDANCE_TYPE,
-                                TH_PRINT_CERTIFICATE, 
-                                TH_EVALUATION_COMPULSORY, 
-                                TH_SERVICE_GROUP, 
-                                TH_CATEGORY, 
-                                to_char(TH_EVALUATION_DATE_FROM, 'DD-MM-YYYY') AS TH_EVA_DATE_FROM,
-                                to_char(TH_EVALUATION_DATE_TO, 'DD-MM-YYYY') AS TH_EVA_DATE_TO, 
-                                TH_TRAINING_HISTORY, 
-                                TH_COMPETENCY_CODE, 
-                                TH_TRAINING_CODE, 
-                                TH_OFFER, 
-                                TH_GENERATE_CPD,
-                                to_char(TH_TIME_FROM, 'HH:MI AM') AS TIME_FR, 
-                                to_char(TH_TIME_TO, 'HH:MI AM') AS TIME_T, 
-                                to_char(TH_CONFIRM_DATE_FROM, 'DD-MM-YYYY') AS TH_CON_DATE_FROM,
-                                to_char(TH_CONFIRM_DATE_TO, 'DD-MM-YYYY') AS TH_CON_DATE_TO, 
-                                TH_FIELD,
-                                TSR_REFID
+            $this->db->select("th_ref_id, 
+                                th_training_title, 
+                                th_training_desc, 
+                                th_type, 
+                                th_status, 
+                                th_internal_external,
+                                th_level, 
+                                th_training_venue, 
+                                th_training_country, 
+                                th_organizer_name, 
+                                th_organizer_level, 
+                                th_organizer_address,
+                                th_organizer_postcode, 
+                                th_organizer_city, 
+                                th_organizer_state, 
+                                th_organizer_country, 
+                                th_sponsor, 
+                                to_char(th_date_from, 'dd/mm/yyyy') as th_date_from,
+                                to_char(th_date_to, 'dd/mm/yyyy') as th_date_to, 
+                                th_total_hours, 
+                                th_training_fee, 
+                                to_char(th_apply_closing_date, 'dd-mm-yyyy') as th_app_closing_date, 
+                                th_current_participant, 
+                                th_max_participant,
+                                th_open, 
+                                th_dept_code, 
+                                th_enter_by, 
+                                th_enter_date, 
+                                th_approve_by, 
+                                th_approve_date, 
+                                th_training_state, 
+                                th_attendance_type,
+                                th_print_certificate, 
+                                th_evaluation_compulsory, 
+                                th_service_group, 
+                                th_category, 
+                                to_char(th_evaluation_date_from, 'dd-mm-yyyy') as th_eva_date_from,
+                                to_char(th_evaluation_date_to, 'dd-mm-yyyy') as th_eva_date_to, 
+                                th_training_history, 
+                                th_competency_code, 
+                                th_training_code, 
+                                th_offer, 
+                                th_generate_cpd,
+                                to_char(th_time_from, 'hh:mi am') as time_fr, 
+                                to_char(th_time_to, 'hh:mi am') as time_t, 
+                                to_char(th_confirm_date_from, 'dd-mm-yyyy') as th_con_date_from,
+                                to_char(th_confirm_date_to, 'dd-mm-yyyy') as th_con_date_to, 
+                                th_field,
+                                tsr_refid
                             ");
-            $this->db->from('TRAINING_HEAD');
-            $this->db->join("TRAINING_SECRETARIAT_REPORT","TH_REF_ID = TSR_REFID","LEFT");
+            $this->db->from('ims_hris.training_head');
+            $this->db->join("ims_hris.training_secretariat_report","th_ref_id = tsr_refid","left");
         } else {
-            $this->db->select("TH_REF_ID, 
-                                TH_TRAINING_TITLE, 
-                                TH_TRAINING_DESC, 
-                                TH_TYPE, 
-                                TH_STATUS, 
-                                TH_INTERNAL_EXTERNAL,
-                                TH_LEVEL, 
-                                TH_TRAINING_VENUE, 
-                                TH_TRAINING_COUNTRY, 
-                                TH_ORGANIZER_NAME, 
-                                TH_ORGANIZER_LEVEL, 
-                                TH_ORGANIZER_ADDRESS,
-                                TH_ORGANIZER_POSTCODE, 
-                                TH_ORGANIZER_CITY, 
-                                TH_ORGANIZER_STATE, 
-                                TH_ORGANIZER_COUNTRY, 
-                                TH_SPONSOR, 
-                                to_char(TH_DATE_FROM, 'DD/MM/YYYY') AS TH_DATE_FROM,
-                                to_char(TH_DATE_TO, 'DD/MM/YYYY') AS TH_DATE_TO, 
-                                TH_TOTAL_HOURS, 
-                                TH_TRAINING_FEE, 
-                                to_char(TH_APPLY_CLOSING_DATE, 'DD-MM-YYYY') AS TH_APP_CLOSING_DATE, 
-                                TH_CURRENT_PARTICIPANT, 
-                                TH_MAX_PARTICIPANT,
-                                TH_OPEN, 
-                                TH_DEPT_CODE, 
-                                TH_ENTER_BY, 
-                                TH_ENTER_DATE, 
-                                TH_APPROVE_BY, 
-                                TH_APPROVE_DATE, 
-                                TH_TRAINING_STATE, 
-                                TH_ATTENDANCE_TYPE,
-                                TH_PRINT_CERTIFICATE, 
-                                TH_EVALUATION_COMPULSORY, 
-                                TH_SERVICE_GROUP, 
-                                TH_CATEGORY, 
-                                to_char(TH_EVALUATION_DATE_FROM, 'DD-MM-YYYY') AS TH_EVA_DATE_FROM,
-                                to_char(TH_EVALUATION_DATE_TO, 'DD-MM-YYYY') AS TH_EVA_DATE_TO, 
-                                TH_TRAINING_HISTORY, 
-                                TH_COMPETENCY_CODE, 
-                                TH_TRAINING_CODE, 
-                                TH_OFFER, 
-                                TH_GENERATE_CPD,
-                                to_char(TH_TIME_FROM, 'HH:MI AM') AS TIME_FR, 
-                                to_char(TH_TIME_TO, 'HH:MI AM') AS TIME_T, 
-                                to_char(TH_CONFIRM_DATE_FROM, 'DD-MM-YYYY') AS TH_CON_DATE_FROM,
-                                to_char(TH_CONFIRM_DATE_TO, 'DD-MM-YYYY') AS TH_CON_DATE_TO, 
-                                TH_FIELD,
+            $this->db->select("th_ref_id, 
+                                th_training_title, 
+                                th_training_desc, 
+                                th_type, 
+                                th_status, 
+                                th_internal_external,
+                                th_level, 
+                                th_training_venue, 
+                                th_training_country, 
+                                th_organizer_name, 
+                                th_organizer_level, 
+                                th_organizer_address,
+                                th_organizer_postcode, 
+                                th_organizer_city, 
+                                th_organizer_state, 
+                                th_organizer_country, 
+                                th_sponsor, 
+                                to_char(th_date_from, 'dd/mm/yyyy') as th_date_from,
+                                to_char(th_date_to, 'dd/mm/yyyy') as th_date_to, 
+                                th_total_hours, 
+                                th_training_fee, 
+                                to_char(th_apply_closing_date, 'dd-mm-yyyy') as th_app_closing_date, 
+                                th_current_participant, 
+                                th_max_participant,
+                                th_open, 
+                                th_dept_code, 
+                                th_enter_by, 
+                                th_enter_date, 
+                                th_approve_by, 
+                                th_approve_date, 
+                                th_training_state, 
+                                th_attendance_type,
+                                th_print_certificate, 
+                                th_evaluation_compulsory, 
+                                th_service_group, 
+                                th_category, 
+                                to_char(th_evaluation_date_from, 'dd-mm-yyyy') as th_eva_date_from,
+                                to_char(th_evaluation_date_to, 'dd-mm-yyyy') as th_eva_date_to, 
+                                th_training_history, 
+                                th_competency_code, 
+                                th_training_code, 
+                                th_offer, 
+                                th_generate_cpd,
+                                to_char(th_time_from, 'hh:mi am') as time_fr, 
+                                to_char(th_time_to, 'hh:mi am') as time_t, 
+                                to_char(th_confirm_date_from, 'dd-mm-yyyy') as th_con_date_from,
+                                to_char(th_confirm_date_to, 'dd-mm-yyyy') as th_con_date_to, 
+                                th_field
                             ");
-            $this->db->from('TRAINING_HEAD');
+            $this->db->from('ims_hris.training_head');
         }
 
         if(!empty($curUsrDept)) {
-            $this->db->where("TH_DEPT_CODE = '$curUsrDept'");
+            $this->db->where("th_dept_code = '$curUsrDept'");
         }
 
         if(!empty($defMonth) && !empty($curYear)) {
-            $this->db->where("((NVL(to_char(TH_DATE_FROM,'MM/YYYY'),'') = '$defMonth'||'/'||'$curYear'))");
+            $this->db->where("((coalesce(to_char(th_date_from,'MM/YYYY'),'') = '$defMonth'||'/'||'$curYear'))");
         } elseif(!empty($defMonth)) {
-            $this->db->where("((NVL(to_char(TH_DATE_FROM,'MM'),'') = '$defMonth'))");
+            $this->db->where("((coalesce(to_char(th_date_from,'MM'),'') = '$defMonth'))");
         } elseif(!empty($curYear)) {
-            $this->db->where("((NVL(to_char(TH_DATE_FROM,'YYYY'),'') = '$curYear'))");
+            $this->db->where("((coalesce(to_char(th_date_from,'YYYY'),'') = '$curYear'))");
         }
         
         if($defIntExt == 'INTERNAL' || $defIntExt == 'EXTERNAL' || $defIntExt == 'EXTERNAL_AGENCY' ) {
-            $this->db->where("TH_INTERNAL_EXTERNAL", $defIntExt);
+            $this->db->where("th_internal_external", $defIntExt);
         } elseif($defIntExt == '1') {
-            $this->db->where("TH_INTERNAL_EXTERNAL NOT IN ('EXTERNAL_AGENCY')");
+            $this->db->where("th_internal_external not in ('EXTERNAL_AGENCY')");
         }
 
         if($defTrSts == 'POSTPONE' || $defTrSts == 'REJECT' || $defTrSts == 'APPROVE' || $defTrSts == 'ENTRY') {
-            $this->db->where("TH_STATUS", $defTrSts);
+            $this->db->where("th_status", $defTrSts);
         } elseif(empty($defTrSts)) {
-            $this->db->where("NVL(TH_STATUS,'ENTRY') = 'APPROVE'");
+            $this->db->where("coalesce(th_status,'ENTRY') = 'APPROVE'");
         }
         
         if($evaluation == '1') {
-            $this->db->where("TH_REF_ID IN (SELECT THD_REF_ID
-                                FROM TRAINING_HEAD_DETL
-                                WHERE NVL(THD_EVALUATION,'N') = 'Y')");
+            $this->db->where("th_ref_id IN (SELECT thd_ref_id
+                                FROM ims_hris.training_head_detl
+                                WHERE coalesce(thd_evaluation,'N') = 'Y')");
         }
 
         if($screRpt == '1') {
-            $this->db->where("to_char(to_date(TH_DATE_FROM, 'DD/MM/YYYY'), 'YYYYMMDD') < to_char(to_date(SYSDATE, 'DD/MM/YYYY'), 'YYYYMMDD')");
-            $this->db->where("TH_ORGANIZER_NAME = 'ULAT'");
+            $this->db->where("to_char(to_date(th_date_from, 'DD/MM/YYYY'), 'YYYYMMDD')::numeric < to_char(to_date(current_date, 'DD/MM/YYYY'), 'YYYYMMDD')::numeric");
+            $this->db->where("th_organizer_name = 'ULAT'");
         }
         
-        $this->db->order_by("TH_DATE_FROM, TH_DATE_TO, TH_TRAINING_TITLE");
+        $this->db->order_by("th_date_from, th_date_to, th_training_title");
 
         $q = $this->db->get();
-        return $q->result();
+        return $q->result_case('UPPER');
     }
 }

@@ -471,18 +471,18 @@ class Ext_training_model extends MY_Model
             "th_training_title" => $form['training_title'],
             "th_training_desc" => $form['training_description'],
             "th_training_venue" => $form['venue'],
-            "th_training_country" => $form['country'],
-            "th_training_state" => $form['state'],
+            //"th_training_country" => $form['country'],
+            //"th_training_state" => $form['state'],
             "th_total_hours" => $form['total_hours'],
-            "th_training_fee" => $form['fee'],
+            //"th_training_fee" => $form['fee'],
             "th_internal_external" => $form['internal_external'],
             "th_sponsor" => $form['sponsor'],
-            "th_max_participant" => $form['participants'],
+            //"th_max_participant" => $form['participants'],
             "th_open" => $form['online_application'],
             // "TH_COMPETENCY_CODE" => $form['competency_code'],
 
             // organizer info
-            "th_organizer_level" => $form['organizer_level'],
+            //"th_organizer_level" => $form['organizer_level'],
             "th_organizer_name" => $form['organizer_name'],
 
             // completion info
@@ -497,6 +497,36 @@ class Ext_training_model extends MY_Model
         //$this->db->set("TH_REF_ID", $refID, false);
         $this->db->set("th_dept_code", $staff_dept_code, false);
         $this->db->set("th_enter_date", $enter_date, false);
+
+        if(!empty($form['th_training_fee'])){
+            $this->db->set("th_training_fee", $form['fee'], false);
+        } else {
+            $this->db->set("th_training_fee", NULL, true);
+        }
+
+        if(!empty($form['th_max_participant'])){
+            $this->db->set("th_max_participant", $form['participants'], false);
+        } else {
+            $this->db->set("th_max_participant", NULL, true);
+        }
+
+        if(!empty($form['th_training_state'])){
+            $this->db->set("th_training_state", $form['state'], false);
+        } else {
+            $this->db->set("th_training_state", NULL, true);
+        }
+
+        if(!empty($form['organizer_level'])){
+            $this->db->set("th_organizer_level", $form['organizer_level'], false);
+        } else {
+            $this->db->set("th_organizer_level", NULL, true);
+        }
+
+        if(!empty($form['th_training_country'])){
+            $this->db->set("th_training_country", $form['th_training_country'], false);
+        } else {
+            $this->db->set("th_training_country", NULL, true);
+        }
 
         if(!empty($form['date_from'])){
             $date_from = "to_date('".$form['date_from']."', 'DD/MM/YYYY')";
@@ -615,17 +645,17 @@ class Ext_training_model extends MY_Model
             "th_training_desc" => $form['training_description'],
             "th_training_venue" => $form['venue'],
             "th_training_country" => $form['country'],
-            "th_training_state" => $form['state'],
+            //"th_training_state" => $form['state'],
             "th_total_hours" => $form['total_hours'],
-            "th_training_fee" => $form['fee'],
+            //"th_training_fee" => $form['fee'],
             "th_internal_external" => $form['internal_external'],
             "th_sponsor" => $form['sponsor'],
-            "th_max_participant" => $form['participants'],
+            //"th_max_participant" => $form['participants'],
             "th_open" => $form['online_application'],
             // "TH_COMPETENCY_CODE" => $form['competency_code'],
 
             // organizer info
-            "th_organizer_level" => $form['organizer_level'],
+            // "th_organizer_level" => $form['organizer_level'],
             "th_organizer_name" => $form['organizer_name'],
 
             // completion info
@@ -639,6 +669,30 @@ class Ext_training_model extends MY_Model
 
         $this->db->set("th_dept_code", $staff_dept_code, false);
         $this->db->set("th_enter_date", $enter_date, false);
+
+        if(!empty($form['th_training_fee'])){
+            $this->db->set("th_training_fee", $form['fee'], false);
+        } else {
+            $this->db->set("th_training_fee", NULL, true);
+        }
+
+        if(!empty($form['th_max_participant'])){
+            $this->db->set("th_max_participant", $form['participants'], false);
+        } else {
+            $this->db->set("th_max_participant", NULL, true);
+        }
+
+        if(!empty($form['th_training_state'])){
+            $this->db->set("th_training_state", $form['state'], false);
+        } else {
+            $this->db->set("th_training_state", NULL, true);
+        }
+
+        if(!empty($form['organizer_level'])){
+            $this->db->set("th_organizer_level", $form['organizer_level'], false);
+        } else {
+            $this->db->set("th_organizer_level", NULL, true);
+        }
 
         if(!empty($form['date_from'])){
             $date_from = "to_date('".$form['date_from']."', 'DD/MM/YYYY')";
@@ -659,14 +713,14 @@ class Ext_training_model extends MY_Model
             $evaluation_period_from = "to_date('".$form['evaluation_period_from']."', 'DD/MM/YYYY')";
             $this->db->set("th_evaluation_date_from", $evaluation_period_from, false);
         } else {
-            $this->db->set("th_evaluation_date_from", '', true);
+            $this->db->set("th_evaluation_date_from", NULL, true);
         }
 
         if(!empty($form['evaluation_period_to'])){
             $evaluation_period_to = "to_date('".$form['evaluation_period_to']."', 'DD/MM/YYYY')";
             $this->db->set("th_evaluation_date_to", $evaluation_period_to, false);
         } else {
-            $this->db->set("th_evaluation_date_to", '', true);
+            $this->db->set("th_evaluation_date_to", NULL, true);
         }
 
         $this->db->where("th_ref_id", $refid);
@@ -723,7 +777,7 @@ class Ext_training_model extends MY_Model
         tct_desc
         ");
         $this->db->from("ims_hris.training_cost");
-        $this->db->join("training_cost_type", "tct_code = tc_cost_code", "left");
+        $this->db->join("ims_hris.training_cost_type", "tct_code = tc_cost_code", "left");
         $this->db->where("tc_training_refid", $refid);
 
         $q = $this->db->get();
@@ -902,14 +956,14 @@ class Ext_training_model extends MY_Model
     // GET YEAR DROPDOWN -postgres
     public function getYearListAppTr() 
     {		
-        $this->db->select("to_char(th_date_from,'yyyy') as cm_year");
+        $this->db->select('to_char(th_date_from,\'yyyy\') as "CM_YEAR"');
         $this->db->from("ims_hris.training_head");
         $this->db->where("th_internal_external = 'EXTERNAL_AGENCY'");
-        $this->db->group_by("TO_CHAR(th_date_from,'YYYY') ");
+        $this->db->group_by("th_date_from");
         $this->db->order_by("TO_CHAR(th_date_from,'YYYY') desc");
         $q = $this->db->get();
                 
-        return $q->result_case('UPPER');
+        return $q->result();
     } 
 
     // GET TRAINING LIST -postgres
@@ -1002,7 +1056,7 @@ class Ext_training_model extends MY_Model
         $this->db->from("ims_hris.training_head");
         $this->db->where("th_status = 'APPROVE'");
         $this->db->where("th_internal_external = 'EXTERNAL_AGENCY'");
-        $this->db->group_by("TO_CHAR(th_date_from,'YYYY') ");
+        $this->db->group_by("TO_CHAR(th_date_from,'YYYY'),th_date_from ");
         $this->db->order_by("TO_CHAR(th_date_from,'YYYY') desc");
         $q = $this->db->get();
                 
@@ -1026,15 +1080,15 @@ class Ext_training_model extends MY_Model
             //"TH_TRAINING_COUNTRY" => $form['country'],
             //"TH_TRAINING_STATE" => $form['state'],
             "th_total_hours" => $form['total_hours'],
-            "th_training_fee" => $form['fee'],
+            //"th_training_fee" => $form['fee'],
             "th_internal_external" => $form['internal_external'],
             "th_sponsor" => $form['sponsor'],
-            "th_max_participant" => $form['participants'],
+            //"th_max_participant" => $form['participants'],
             "th_open" => $form['online_application'],
             // "TH_COMPETENCY_CODE" => $form['competency_code'],
 
             // organizer info
-            "th_organizer_level" => $form['organizer_level'],
+            // "th_organizer_level" => $form['organizer_level'],
             "th_organizer_name" => $form['organizer_name'],
 
             // completion info
@@ -1046,15 +1100,33 @@ class Ext_training_model extends MY_Model
         );
 
         if(empty($form['country'])) {
-            $this->db->set("th_training_country", "", true);
+            $this->db->set("th_training_country", NULL, true);
         } else {
             $this->db->set("th_training_country", $form['country'], true);
         }
 
         if(empty($form['state'])) {
-            $this->db->set("th_training_state", "", true);
+            $this->db->set("th_training_state", NULL, true);
         } else {
             $this->db->set("th_training_state", $form['state'], true);
+        }
+
+        if(empty($form['th_training_fee'])) {
+            $this->db->set("th_training_fee", NULL, true);
+        } else {
+            $this->db->set("th_training_fee", $form['fee'], true);
+        }
+
+        if(empty($form['zth_max_participant'])) {
+            $this->db->set("th_max_participant", NULL, true);
+        } else {
+            $this->db->set("th_max_participant", $form['participants'], true);
+        }
+
+        if(empty($form['th_organizer_level'])) {
+            $this->db->set("th_organizer_level", NULL, true);
+        } else {
+            $this->db->set("th_organizer_level", $form['th_organizer_level'], true);
         }
 
         $this->db->set("th_dept_code", $staff_dept_code, false);
@@ -1089,14 +1161,14 @@ class Ext_training_model extends MY_Model
             $evaluation_period_from = "to_date('".$form['evaluation_period_from']."', 'DD/MM/YYYY')";
             $this->db->set("th_evaluation_date_from", $evaluation_period_from, false);
         } else {
-            $this->db->set("th_evaluation_date_from", '', true);
+            $this->db->set("th_evaluation_date_from", NULL, true);
         }
 
         if(!empty($form['evaluation_period_to'])){
             $evaluation_period_to = "to_date('".$form['evaluation_period_to']."', 'DD/MM/YYYY')";
             $this->db->set("th_evaluation_date_to", $evaluation_period_to, false);
         } else {
-            $this->db->set("th_evaluation_date_to", '', true);
+            $this->db->set("th_evaluation_date_to", NULL, true);
         }
 
         $this->db->where("th_ref_id", $refid);
@@ -1162,7 +1234,7 @@ class Ext_training_model extends MY_Model
         $this->db->join("ims_hris.training_cost", "tc_cost_code = 'T001' and tc_training_refid = '$refid'", "left");
         $this->db->where("sth_status = 'RECOMMEND'");
         $this->db->where("sth_training_refid", $refid);
-        $this->db->order_by("get_staff_name(sth_staff_id)");
+        $this->db->order_by("ims_hris.get_staff_name(sth_staff_id)");
         $q = $this->db->get();
         
         return $q->result_case('UPPER');
@@ -1457,10 +1529,10 @@ class Ext_training_model extends MY_Model
     public function getYearListTrCost() 
     {		
         $this->db->select("to_char(th_date_from,'yyyy') as cm_year");
-        $this->db->from("training_head");
+        $this->db->from("ims_hris.training_head");
         $this->db->where("th_status = 'APPROVE'");
         $this->db->where("th_internal_external = 'EXTERNAL_AGENCY'");
-        $this->db->group_by("TO_CHAR(th_date_from,'YYYY') ");
+        $this->db->group_by("TO_CHAR(th_date_from,'YYYY'), th_date_from ");
         $this->db->order_by("TO_CHAR(th_date_from,'YYYY') desc");
         $q = $this->db->get();
                 
@@ -1478,7 +1550,7 @@ class Ext_training_model extends MY_Model
         $this->db->from("ims_hris.staff_training_cost_main");
         $this->db->join("ims_hris.staff_main", "sm_staff_id = stcm_staff_id", "left");
         $this->db->where("stcm_training_refid", $refid);
-        $this->db->order_by("UPPER(get_staff_name(stcm_staff_id))");
+        $this->db->order_by("UPPER(ims_hris.get_staff_name(stcm_staff_id))");
         $q = $this->db->get();
         
         return $q->result_case('UPPER');
@@ -1658,10 +1730,10 @@ class Ext_training_model extends MY_Model
     public function getYearListAppTr2() 
     {		
         $this->db->select("to_char(th_date_from,'yyyy') as cm_year");
-        $this->db->from("training_head");
+        $this->db->from("ims_hris.training_head");
         $this->db->where("th_status = 'APPROVE'");
         $this->db->where("th_internal_external = 'EXTERNAL_AGENCY'");
-        $this->db->group_by("TO_CHAR(th_date_from,'YYYY')");
+        $this->db->group_by("TO_CHAR(th_date_from,'YYYY'), th_date_from");
         $this->db->order_by("TO_CHAR(th_date_from,'YYYY') desc");
         $q = $this->db->get();
                 
@@ -1725,7 +1797,7 @@ class Ext_training_model extends MY_Model
         $this->db->where("sth_status = 'RECOMMEND_BSM'");
         $this->db->where("sth_fee_code in (select tfs_code from ims_hris.training_fee_setup where coalesce(tfs_mpe_approve,'N') = 'Y')");
         $this->db->where("sth_training_refid", $refid);
-        $this->db->order_by("get_staff_name(sth_staff_id)");
+        $this->db->order_by("ims_hris.get_staff_name(sth_staff_id)");
         $q = $this->db->get();
         
         return $q->result_case('UPPER');
@@ -1879,7 +1951,7 @@ class Ext_training_model extends MY_Model
         $this->db->join("ims_hris.training_fee_setup", "tfs_code = sth_fee_code", "left");
         $this->db->join("ims_hris.training_cost", "tc_cost_code = 'T001' and tc_training_refid = '$refid'", "LEFT");
         $this->db->where("sth_training_refid", $refid);
-        $this->db->order_by("sth_staff_id, upper(get_staff_dept(sth_staff_id)), sth_status, upper(get_staff_name(sth_staff_id))");
+        $this->db->order_by("sth_staff_id, upper(ims_hris.get_staff_dept(sth_staff_id)), sth_status, upper(ims_hris.get_staff_name(sth_staff_id))");
         $q = $this->db->get();
         
         return $q->result_case('UPPER');
@@ -2074,7 +2146,7 @@ class Ext_training_model extends MY_Model
         $this->db->join("ims_hris.staff_main", "sm_staff_id = sth_staff_id", "LEFT");
         $this->db->join("ims_hris.training_participant_role", "tpr_code = sth_participant_role", "LEFT");
         $this->db->join("ims_hris.training_fee_setup", "tfs_code = sth_fee_code", "LEFT");
-        $this->db->join("ims_hris.training_cost", "TC_COST_CODE = 'T001' and tc_training_refid = '$refid'", "LEFT");
+        $this->db->join("ims_hris.training_cost", "tc_cost_code = 'T001' and tc_training_refid = '$refid'", "LEFT");
         $this->db->where("sth_training_refid", $refid);
         $this->db->where("sth_staff_id", $staff_id);
         $q = $this->db->get();
