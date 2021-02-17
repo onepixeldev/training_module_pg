@@ -6,6 +6,7 @@ class Ext_training_appl extends MY_Controller
 {
     private $staff_id;
     private $username;
+    private $rep_path = "/Reports/PG_MyHRIS/HRA_AT/";
 
     public function __construct()
     {
@@ -512,7 +513,7 @@ class Ext_training_appl extends MY_Controller
 			$this->jasperreport->setAttachment();
 		}
 		
-		$this->jasperreport->runReport("/Reports/MyHRIS/HRA_AT/" . $repCode,$format,$param);
+		$this->jasperreport->runReport($this->rep_path.$repCode,$format,$param);
     }
 
     /*===========================================================
