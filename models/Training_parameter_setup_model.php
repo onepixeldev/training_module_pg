@@ -917,7 +917,9 @@ class Training_parameter_setup_model extends MY_Model
             "TAS_ORDERING" => $form['order'],
             "TAS_CODE" => $form['code'],
             "TAS_DESC" => $form['description'],
-            "TAS_ASSESSMENT_TYPE" => $form['assessment_type']
+            "TAS_ASSESSMENT_TYPE" => $form['assessment_type'],
+            "TAS_NUMBERING" => $form['label'],
+            "TAS_STATUS" => $form['status']
         );
         
         return $this->db->insert("TRAINING_ASSESSMENT_SETUP", $data);
@@ -955,7 +957,9 @@ class Training_parameter_setup_model extends MY_Model
             "TAS_TYPE" => $form['type'],
             "TAS_ORDERING" => $form['order'],
             "TAS_DESC" => $form['description'],
-            "TAS_ASSESSMENT_TYPE" => $form['assessment_type']
+            "TAS_ASSESSMENT_TYPE" => $form['assessment_type'],
+            "TAS_NUMBERING" => $form['label'],
+            "TAS_STATUS" => $form['status']
         );
         
         
@@ -1177,6 +1181,8 @@ class Training_parameter_setup_model extends MY_Model
         return $q->row();
     }
 
+    
+
     /*_____________________
         ADD PROCESS
     _______________________*/
@@ -1251,4 +1257,45 @@ class Training_parameter_setup_model extends MY_Model
         
         return $q->result();
     }
+	
+    /*_____________________
+	TAB Assessment Setup: Training / Facilitator Assessment General Setup
+    _____________________*/
+	// ASF014 - TAB Assessment Setup: Training / Facilitator Assessment General Setup
+	// GET MAIN INFO
+    public function getTrainFaciEvalSetupInfo() {
+        $this->db->select('HP_PARM_CODE AS PARM_CODE, HP_PARM_DESC AS PARM_DESC, 
+						DECODE(HP_PARM_CODE,\'TRAINING_FACILITATOR_EVAL_REMINDER_INTERVAL\',\'Send Memo Reminder Interval\', 
+						\'\') AS PARM_LABEL, 
+						DECODE(HP_PARM_CODE,\'TRAINING_FACILITATOR_EVAL_REMINDER_INTERVAL\',\'days\', 
+						\'\') AS PARM_REMARK');
+        $this->db->from('HRADMIN_PARMS');
+		$this->db->where('HP_PARM_CODE IN (\'TRAINING_FACILITATOR_EVAL_REMINDER_INTERVAL\')');
+        $this->db->order_by('DECODE(HP_PARM_CODE,\'TRAINING_FACILITATOR_EVAL_REMINDER_INTERVAL\',1,HP_PARM_CODE)');
+        $q = $this->db->get();
+        
+        return $q->result();
+    } //getTrainFaciEvalSetupInfo()
+	
+	// GET DETAILS
+    public function getTrainFaciEvalSetupDetail($parmCode, $parmDesc) {
+        $this->db->select('HP_PARM_CODE AS PARM_CODE, HP_PARM_DESC AS PARM_DESC');
+        $this->db->from('HRADMIN_PARMS');
+		$this->db->where('HP_PARM_CODE', $parmCode);
+		$this->db->where('HP_PARM_DESC', $parmDesc);
+        $q = $this->db->get();
+        
+        return $q->row();
+    } //getTrainFaciEvalDetail()
+	
+    // UPDATE 
+    public function updateTrainFaciEvalSetupDetail($parmCode, $newParmDesc) {	
+        $data = array(
+            "HP_PARM_DESC" => $newParmDesc
+        );
+        
+		$this->db->where("HP_PARM_CODE", $parmCode);
+        
+        return $this->db->update("HRADMIN_PARMS", $data);
+    } // updateTrainFaciEvalSetupDetail()
 }

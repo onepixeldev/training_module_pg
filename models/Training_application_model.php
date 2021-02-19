@@ -1007,7 +1007,7 @@ class Training_application_model extends MY_Model
             "th_training_title" => $form['training_title'],
             "th_training_desc" => $form['training_description'],
             "th_training_venue" => $form['venue'],
-            "th_training_country" => $form['country'],
+            // "th_training_country" => $form['country'],
             // "th_training_state" => $form['state'],
             "th_total_hours" => $form['total_hours'],
             "th_internal_external" => $form['internal_external'],
@@ -1035,18 +1035,25 @@ class Training_application_model extends MY_Model
         $this->db->set("th_enter_date", $enter_date, false);
 
         if(!empty($form['organizer_level'])){
-            $this->db->set("th_organizer_level", $form['organizer_level'], false);
+            $org_lvl = "'".$form['organizer_level']."'";
+            $this->db->set("th_organizer_level", $org_lvl, false);
         } else {
             $this->db->set("th_organizer_level", NULL, true);
         }
 
-        if(!empty($form['th_training_state'])){
-            $this->db->set("th_training_state", $form['state'], false);
+        if(!empty($form['state'])){
+            $this->db->set("th_training_state", "'".$form['state']."'", false);
         } else {
             $this->db->set("th_training_state", NULL, true);
         }
 
-        if(!empty($form['th_max_participant'])){
+        if(!empty($form['country'])){
+            $this->db->set("th_training_country", "'".$form['country']."'", false);
+        } else {
+            $this->db->set("th_training_country", NULL, true);
+        }
+
+        if(!empty($form['participants'])){
             $this->db->set("th_max_participant", $form['th_max_participant'], false);
         } else {
             $this->db->set("th_max_participant", NULL, true);
@@ -1057,12 +1064,12 @@ class Training_application_model extends MY_Model
             $this->db->set("th_date_from", $date_from, false);
 
             if(!empty($form['time_from'])){
-                $time_from = "to_date('".$form['date_from']." ".$form['time_from']."', 'DD/MM/YYYY HH12:MI PM')";
+                $time_from = "to_timestamp('".$form['date_from']." ".$form['time_from']."', 'DD/MM/YYYY HH12:MI PM')";
                 $this->db->set("th_time_from", $time_from, false);
             }
 
             if(!empty($form['time_to'])){
-                $time_to = "to_date('".$form['date_from']." ".$form['time_to']."', 'DD/MM/YYYY HH12:MI PM')";
+                $time_to = "to_timestamp('".$form['date_from']." ".$form['time_to']."', 'DD/MM/YYYY HH12:MI PM')";
                 $this->db->set("th_time_to", $time_to, false);
             }
         }
@@ -1280,7 +1287,7 @@ class Training_application_model extends MY_Model
             "th_training_title" => $form['training_title'],
             "th_training_desc" => $form['training_description'],
             "th_training_venue" => $form['venue'],
-            "th_training_country" => $form['country'],
+            // "th_training_country" => $form['country'],
             //"th_training_state" => $form['state'],
             "th_total_hours" => $form['total_hours'],
             "th_internal_external" => $form['internal_external'],
@@ -1309,20 +1316,32 @@ class Training_application_model extends MY_Model
         $this->db->set("th_dept_code", $staff_dept_code, false);
         $this->db->set("th_enter_date", $enter_date, false);
 
+        // if(!empty($form['organizer_level'])){
+        //     $this->db->set("th_organizer_level", $form['organizer_level'], false);
+        // } else {
+        //     $this->db->set("th_organizer_level", NULL, true);
+        // }
         if(!empty($form['organizer_level'])){
-            $this->db->set("th_organizer_level", $form['organizer_level'], false);
+            $org_lvl = "'".$form['organizer_level']."'";
+            $this->db->set("th_organizer_level", $org_lvl, false);
         } else {
             $this->db->set("th_organizer_level", NULL, true);
         }
 
-        if(!empty($form['th_training_state'])){
-            $this->db->set("th_training_state", $form['state'], false);
+        if(!empty($form['state'])){
+            $this->db->set("th_training_state", "'".$form['state']."'", false);
         } else {
             $this->db->set("th_training_state", NULL, true);
         }
 
-        if(!empty($form['th_max_participant'])){
-            $this->db->set("th_max_participant", $form['th_max_participant'], false);
+        if(!empty($form['country'])){
+            $this->db->set("th_training_country", "'".$form['country']."'", false);
+        } else {
+            $this->db->set("th_training_country", NULL, true);
+        }
+
+        if(!empty($form['participants'])){
+            $this->db->set("th_max_participant", $form['participants'], false);
         } else {
             $this->db->set("th_max_participant", NULL, true);
         }
@@ -1330,14 +1349,14 @@ class Training_application_model extends MY_Model
         if(!empty($form['date_from'])){
             $date_from = "to_date('".$form['date_from']."', 'DD/MM/YYYY')";
             $this->db->set("th_date_from", $date_from, false);
-
+            
             if(!empty($form['time_from'])){
-                $time_from = "to_date('".$form['date_from']." ".$form['time_from']."', 'DD/MM/YYYY HH12:MI PM')";
+                $time_from = "to_timestamp('".$form['date_from']." ".$form['time_from']."', 'DD-MM-YYYY HH12:MI AM')";
                 $this->db->set("th_time_from", $time_from, false);
             }
 
             if(!empty($form['time_to'])){
-                $time_to = "to_date('".$form['date_from']." ".$form['time_to']."', 'DD/MM/YYYY HH12:MI PM')";
+                $time_to = "to_timestamp('".$form['date_from']." ".$form['time_to']."', 'DD-MM-YYYY HH12:MI AM')";
                 $this->db->set("th_time_to", $time_to, false);
             }
         }
@@ -1584,7 +1603,7 @@ class Training_application_model extends MY_Model
         
         $curUsername = $this->username;
 
-        $this->db->select("sm_staff_id AS SM_STAFF_ID, sm_staff_name AS SM_STAFF_NAME, sm_dept_code AS SM_DEPT_CODE, sm_email_addr AS SM_EMAIL_ADDR");
+        $this->db->select("sm_staff_id, sm_staff_name, sm_dept_code, sm_email_addr");
         $this->db->from("ims_hris.staff_main");
 
         if(empty($staffID)) {
@@ -1594,7 +1613,7 @@ class Training_application_model extends MY_Model
         }
         
         $q = $this->db->get();
-        return $q->row();
+        return $q->row_case('UPPER');
     }
 
     // GET CURRENT DEFAULT YEAR -postgres
@@ -3668,7 +3687,7 @@ class Training_application_model extends MY_Model
         $this->db->from("ims_hris.training_head");
         $this->db->where("th_status = 'APPROVE'");
         $this->db->where("TO_CHAR(th_date_from,'YYYY') = coalesce('$year',TO_CHAR(current_date,'YYYY'))");
-        $this->db->where("th_ref_id IN (select tmh_training_refid from ims_hris.training_memo_history)");
+        // $this->db->where("th_ref_id IN (select tmh_training_refid from ims_hris.training_memo_history)");
         
         $this->db->order_by("th_date_from, th_training_title");
 

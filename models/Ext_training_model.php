@@ -498,35 +498,37 @@ class Ext_training_model extends MY_Model
         $this->db->set("th_dept_code", $staff_dept_code, false);
         $this->db->set("th_enter_date", $enter_date, false);
 
-        if(!empty($form['th_training_fee'])){
+        if(!empty($form['fee'])){
             $this->db->set("th_training_fee", $form['fee'], false);
         } else {
             $this->db->set("th_training_fee", NULL, true);
         }
 
-        if(!empty($form['th_max_participant'])){
+        if(!empty($form['participants'])){
             $this->db->set("th_max_participant", $form['participants'], false);
         } else {
             $this->db->set("th_max_participant", NULL, true);
         }
 
-        if(!empty($form['th_training_state'])){
-            $this->db->set("th_training_state", $form['state'], false);
+        if(!empty($form['state'])){
+            $this->db->set("th_training_state", "'".$form['state']."'", false);
         } else {
             $this->db->set("th_training_state", NULL, true);
         }
 
+        if(!empty($form['country'])){
+            $this->db->set("th_training_country", "'".$form['country']."'", false);
+        } else {
+            $this->db->set("th_training_country", NULL, true);
+        }
+
         if(!empty($form['organizer_level'])){
-            $this->db->set("th_organizer_level", $form['organizer_level'], false);
+            $org_lvl = "'".$form['organizer_level']."'";
+            $this->db->set("th_organizer_level", $org_lvl, false);
         } else {
             $this->db->set("th_organizer_level", NULL, true);
         }
 
-        if(!empty($form['th_training_country'])){
-            $this->db->set("th_training_country", $form['th_training_country'], false);
-        } else {
-            $this->db->set("th_training_country", NULL, true);
-        }
 
         if(!empty($form['date_from'])){
             $date_from = "to_date('".$form['date_from']."', 'DD/MM/YYYY')";
@@ -644,7 +646,7 @@ class Ext_training_model extends MY_Model
             "th_training_title" => $form['training_title'],
             "th_training_desc" => $form['training_description'],
             "th_training_venue" => $form['venue'],
-            "th_training_country" => $form['country'],
+            // "th_training_country" => $form['country'],
             //"th_training_state" => $form['state'],
             "th_total_hours" => $form['total_hours'],
             //"th_training_fee" => $form['fee'],
@@ -669,27 +671,34 @@ class Ext_training_model extends MY_Model
 
         $this->db->set("th_dept_code", $staff_dept_code, false);
         $this->db->set("th_enter_date", $enter_date, false);
-
-        if(!empty($form['th_training_fee'])){
+        
+        if(!empty($form['fee'])){
             $this->db->set("th_training_fee", $form['fee'], false);
         } else {
             $this->db->set("th_training_fee", NULL, true);
         }
 
-        if(!empty($form['th_max_participant'])){
+        if(!empty($form['participants'])){
             $this->db->set("th_max_participant", $form['participants'], false);
         } else {
             $this->db->set("th_max_participant", NULL, true);
         }
 
-        if(!empty($form['th_training_state'])){
-            $this->db->set("th_training_state", $form['state'], false);
+        if(!empty($form['state'])){
+            $this->db->set("th_training_state", "'".$form['state']."'", false);
         } else {
             $this->db->set("th_training_state", NULL, true);
         }
 
+        if(!empty($form['country'])){
+            $this->db->set("th_training_country", "'".$form['country']."'", false);
+        } else {
+            $this->db->set("th_training_country", NULL, true);
+        }
+
         if(!empty($form['organizer_level'])){
-            $this->db->set("th_organizer_level", $form['organizer_level'], false);
+            $org_lvl = "'".$form['organizer_level']."'";
+            $this->db->set("th_organizer_level", $org_lvl, false);
         } else {
             $this->db->set("th_organizer_level", NULL, true);
         }
@@ -1111,13 +1120,13 @@ class Ext_training_model extends MY_Model
             $this->db->set("th_training_state", $form['state'], true);
         }
 
-        if(empty($form['th_training_fee'])) {
+        if(empty($form['fee'])) {
             $this->db->set("th_training_fee", NULL, true);
         } else {
             $this->db->set("th_training_fee", $form['fee'], true);
         }
 
-        if(empty($form['zth_max_participant'])) {
+        if(empty($form['participants'])) {
             $this->db->set("th_max_participant", NULL, true);
         } else {
             $this->db->set("th_max_participant", $form['participants'], true);

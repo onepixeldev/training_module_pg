@@ -57,6 +57,8 @@ class Training_parameter_setup extends MY_Controller
         }
         $data['default_ast'] = $aSt;*/
         $data['max_appl'] = $this->mdl->getTrMaxAppl();
+		// get Training / Facilitator Assessment General Setupinfo
+        $data['train_faci_eval_setup_rec'] = $this->mdl->getTrainFaciEvalSetupInfo();
         
         $this->render($data);
     }
@@ -1890,7 +1892,8 @@ class Training_parameter_setup extends MY_Controller
         // form / input validation
         $rule = array('type' => 'required|max_length[20]','order' => 'required|is_natural_no_zero|max_length[30]',
         'code' => 'required|max_length[8]','description' => 'required|max_length[200]', 
-        'assessment_type' => 'required|max_length[20]');
+        'assessment_type' => 'required|max_length[20]','label' => 'required|max_length[8]', 
+        'status' => 'required');
 
         $code_tasv = $form['code'];
         $type_tasv = $form['type'];
@@ -2014,7 +2017,8 @@ class Training_parameter_setup extends MY_Controller
         // form / input validation
         $rule = array('type' => 'required|max_length[20]','order' => 'required|is_natural_no_zero|max_length[30]',
         'code' => 'required|max_length[8]','description' => 'required|max_length[200]', 
-        'assessment_type' => 'required|max_length[20]');
+        'assessment_type' => 'required|max_length[20]','label' => 'required|max_length[8]', 
+        'status' => 'required');
         
         $exclRule = null;
         
@@ -2611,4 +2615,38 @@ class Training_parameter_setup extends MY_Controller
         
         echo json_encode($json);
     }
+
+    /*_____________________
+        Tab Assessment Setup: Training / Facilitator Assessment General Setup
+    _____________________*/
+	// UPDATE
+    public function updateTrainFaciEvalSetup() {
+		$this->isAjax();
+		
+		// get parameter values
+        $parmCode = $this->input->post('parmCode', true);
+        $oldParmDesc = $this->input->post('oldParmDesc', true);
+        $newParmDesc = $this->input->post('newParmDesc', true);
+		
+   		// Check whether record for selected code is already exists 
+		$recCounter = $this->mdl->getTrainFaciEvalSetupDetail($parmCode, $newParmDesc);
+
+        // If not exists, proceed add new record
+  		if (empty($recCounter)) {
+	        // Begin Update Record
+	    	$update = $this->mdl->updateTrainFaciEvalSetupDetail($parmCode, $newParmDesc);
+	        	
+	      	if ($update > 0) {
+	          	$json = array('sts' => 1, 'msg' => 'Record has been updated', 'alert' => 'success');
+	      	} else {
+	         	$json = array('sts' => 0, 'msg' => 'Fail to update record', 'alert' => 'danger');
+	      	}
+      	} else {
+			// if oldParmDesc = newParmDesc, no action taken
+         	$json = array('sts' => 1, 'msg' => 'No record updated', 'alert' => 'success');
+     	}
+		// -------------------
+         	
+        echo json_encode($json);
+    } // updateTrainFaciEvalSetup()
 }
