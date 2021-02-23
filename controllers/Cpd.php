@@ -3045,4 +3045,69 @@ class Cpd extends MY_Controller
 
         $this->render($data);
     }
+
+    /*===============================================================
+       UPDATE 23/02/2021
+    ================================================================*/
+
+    // TRAINING LIST 6
+    public function getTrainingList6()
+    {   
+        // selected filter value
+        $dept = $this->input->post('sDept', true);
+        $month = $this->input->post('sMonth', true);
+        $year = $this->input->post('sYear', true);
+
+        // var_dump($dept.' '.$month.' '.$year);
+        // exit;
+        // get available records
+        $data['tr_list'] = $this->mdl_cpd->getTrainingList6($dept, $month, $year);
+
+        $this->render($data);
+    }
+
+    // UPDATE CPD INFO EXTRNAl TRAINING
+    public function ATF123EX()
+    {
+        $refid = $this->input->post('refid', true);
+
+        if(!empty($refid)) {
+
+            $data['refid'] = $refid;
+
+            // TRAINING INFO
+            $data['tr_detl'] = $this->mdl_cpd->getTrainingDetl($refid);
+
+            // STAFF CPD MARK LIST
+            $data['stf_list'] = $this->mdl_cpd->getStaffTrCpd($refid);
+        }
+        
+        $this->render($data);
+    }
+
+    // UPDATE CPD INFO EXTRNAl TRAINING
+    public function ATF123EXB()
+    {   
+        // default value filter
+        // default dept
+        $data['cur_usr_dept'] = $this->mdl_cpd->getCurUserDept();
+        $data['curUsrDept'] = $data['cur_usr_dept']->SM_DEPT_CODE;
+        // default month
+        $data['defMonth'] = '';
+        // default year
+        $data['cur_year'] = $this->mdl_cpd->getCurYear();
+        $data['curYear'] = $data['cur_year']->CUR_YEAR;
+
+
+        // get department dd list
+        $data['dept_list'] = $this->dropdown($this->mdl_cpd->getDeptList2(), 'DM_DEPT_CODE', 'DEPT_CODE_DESC', ' ---Please select--- ');
+        //get year dd list
+        $data['year_list'] = $this->dropdown($this->mdl_cpd->getYearList(), 'CM_YEAR', 'CM_YEAR', ' ---Please select--- ');
+        //get month dd list
+        $data['month_list'] = $this->dropdown($this->mdl_cpd->getMonthList(), 'CM_MM', 'CM_MONTH', ' ---Please select--- ');
+        //get training status list
+        //$data['tr_sts_list'] = array('ENTRY'=>'ENTRY', 'APPROVE'=>'APPROVE', 'POSTPONE'=>'POSTPONE');
+
+        $this->render($data);
+    }
 }

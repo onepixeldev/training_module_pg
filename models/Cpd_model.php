@@ -2042,4 +2042,39 @@ class Cpd_model extends MY_Model
         $q = $this->db->get();
         return $q->result_case('UPPER');
     }
+
+    /*===============================================================
+       UPDATE 23/02/2021
+    ================================================================*/
+    
+    // GET TRAINING LIST 6 -postgres
+    public function getTrainingList6($dept, $month, $year)
+    {
+        $this->db->select("th_ref_id,
+        th_training_title,
+        TO_CHAR(th_date_from, 'DD/MM/YYYY') th_date_from2,
+        TO_CHAR(th_date_to, 'DD/MM/YYYY') th_date_to2,
+        th_training_fee
+        ");
+        $this->db->from("ims_hris.training_head");
+
+        if(!empty($dept)) {
+            $this->db->where("th_dept_code", $dept);
+        }
+
+        if(!empty($month)) {
+            $this->db->where("COALESCE(TO_CHAR(th_date_from,'MM'),'') = '$month'");
+        }
+
+        if (!empty($year)) {
+            $this->db->where("COALESCE(TO_CHAR(th_date_from,'YYYY'),'') = '$year'");
+        }
+        
+        $this->db->where("th_status = 'APPROVE'");
+        $this->db->where("th_internal_external = 'EXTERNAL_AGENCY'");
+        $this->db->order_by("th_date_from, th_date_to, th_training_title, th_ref_id");
+        $q = $this->db->get();
+        
+        return $q->result_case('UPPER');
+    }
 }

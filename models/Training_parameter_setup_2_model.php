@@ -25,7 +25,7 @@ class Training_parameter_setup_2_model extends MY_Model
     // -postgres
     public function getTraEffEvaSetup($thm)
     {
-        $this->db->select('to_number(hp_parm_desc) hp_parm_desc, hp_parm_no, hp_parm_code');
+        $this->db->select('(hp_parm_desc)::numeric hp_parm_desc, hp_parm_no, hp_parm_code');
         $this->db->from('ims_hris.hradmin_parms');
         $this->db->where("hp_parm_code = 'TRAINING_HOD_MEMO'");
         $this->db->where('hp_parm_no', $thm);
@@ -37,7 +37,7 @@ class Training_parameter_setup_2_model extends MY_Model
     // -postgres
     public function getTrEvaMemSetup()
     {
-        $this->db->select('to_number(hp_parm_desc) hp_parm_desc, hp_parm_code, hp_parm_no');
+        $this->db->select('(hp_parm_desc)::numeric hp_parm_desc, hp_parm_code, hp_parm_no');
         $this->db->from('ims_hris.hradmin_parms');
         $this->db->where("hp_parm_code = 'TRAINING_EVALUATION_MEMO'");
         $this->db->where('hp_parm_no = 1');
@@ -824,7 +824,7 @@ class Training_parameter_setup_2_model extends MY_Model
     public function getEffGraSetup($typeEGS = null)
     {
         $this->db->select('*');
-        $this->db->from('training_assessment_grading');
+        $this->db->from('ims_hris.training_assessment_grading');
         if (!empty($typeEGS)) {
             $this->db->where("tag_grade_type", $typeEGS);
         }
