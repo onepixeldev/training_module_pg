@@ -32,9 +32,21 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-md-3 control-label"><b>Label</b></label>
+            <div class="col-md-3">
+				<input type="text" name="form[label]" placeholder="Label" class="form-control" value="<?php echo $tasv_desc->TAS_NUMBERING?>">
+            </div>
+        </div>
+        <div class="form-group">
 			<label class="col-md-3 control-label"><b>Assessment Type</b> <b><font color="red">* </font></b></label>
 			<div class="col-md-3">
 				<?php echo form_dropdown('form[assessment_type]', array('OBJECTIVE'=>'OBJECTIVE','SUBJECTIVE'=>'SUBJECTIVE'), $tasv_desc->TAS_ASSESSMENT_TYPE, 'class="selectpicker form-control width-50"')?>
+			</div>
+		</div>
+        <div class="form-group">
+			<label class="col-md-3 control-label"><b>Status</b> <b><font color="red">* </font></b></label>
+			<div class="col-md-3">
+				<?php echo form_dropdown('form[status]', array('' => ' ---Please select--- ','Y'=>'ACTIVE','Y'=>'ACTIVE','N'=>'INACTIVE'), $tasv_desc->TAS_STATUS, 'class="form-control" style="width:50%"')?>
 			</div>
 		</div>
     </div>

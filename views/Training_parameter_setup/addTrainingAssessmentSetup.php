@@ -35,6 +35,12 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-md-3 control-label"><b>Label</b></label>
+            <div class="col-md-3">
+				<input type="text" name="form[label]" placeholder="Label" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
 			<label class="col-md-3 control-label"><b>Assessment Type</b> <b><font color="red">* </font></b></label>
 			<div class="col-md-3">
 				<select class="selectpicker form-control" name="form[assessment_type]">
@@ -42,6 +48,12 @@
 					<option class="text-primary" value="OBJECTIVE">OBJECTIVE</option>
 					<option class="text-success" value="SUBJECTIVE">SUBJECTIVE</option>
 				</select>
+			</div>
+		</div>
+        <div class="form-group">
+			<label class="col-md-3 control-label"><b>Status</b> <b><font color="red">* </font></b></label>
+			<div class="col-md-3">
+				<?php echo form_dropdown('form[status]', array('' => ' ---Please select--- ','Y'=>'ACTIVE','Y'=>'ACTIVE','N'=>'INACTIVE'), '', 'class="form-control" style="width:50%"')?>
 			</div>
 		</div>
     </div>

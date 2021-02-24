@@ -8,7 +8,9 @@
 			<th class="text-center">Order</th>
 			<th class="text-center">Code</th>
 			<th class="text-center">Description</th>
+			<th class="text-center">Label</th>
 			<th class="text-center">Assessment Type</th>
+			<th class="text-center">Status</th>
 			<th class="text-center">Action</th>
 		</tr>
 		</thead>
@@ -17,13 +19,16 @@
 			//$no = 0;
 			if (!empty($training_assessment_setup_view)) {
 				foreach ($training_assessment_setup_view as $tasv) {
+					$rec_sts = ($tasv->TAS_STATUS=='Y')?'ACTIVE':(($tasv->TAS_STATUS=='N')?'INACTIVE':'');
 					echo '
 					<tr>
 						<td class="text-center col-md-1">' . $tasv->TAS_TYPE . '</td>
 						<td class="text-center col-md-1">' . $tasv->TAS_ORDERING . '</td>
 						<td class="text-center col-md-1">' . $tasv->TAS_CODE . '</td>
-						<td class="text-left">' . $tasv->TAS_DESC . '</td>
+						<td class="text-left col-md-3">' . $tasv->TAS_DESC . '</td>
+						<td class="text-center col-md-1">' . $tasv->TAS_NUMBERING . '</td>
 						<td class="text-center col-md-1">' . $tasv->TAS_ASSESSMENT_TYPE . '</td>
+						<td class="text-center col-md-1">' . $rec_sts . '</td>
 						<td class="text-center col-md-3">
 							<button type="button" class="btn btn-info btn-xs show_grading_setup" title="Show grading setup"><i class="fa fa-arrow-down"></i> Select</button>
 							<button type="button" class="btn btn-success btn-xs edit_tasv" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>

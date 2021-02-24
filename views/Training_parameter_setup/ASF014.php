@@ -231,9 +231,38 @@
 									<div class="text-right">
 										<button type="button" class="btn btn-primary btn-sm add_tasv"><i class="fa fa-plus"></i> Add New Assessment Setup</button>
 									</div>
-									<div id="trainingAssessmentSetupList">
-
+									<div id="trainingAssessmentSetupList"></div>
+									<div>
+										<br>
+										<h4 class="panel-heading bg-color-blueDark txt-color-white">Training / Facilitator Assessment General Setup</h4>
 									</div>
+									<div class="text-right">&nbsp;</div>
+									<div class="alert alert-warning fade in" id="alertT11" hidden>
+										<span id="demo-setting"><i class="fa fa-cogs fa-spin txt-color-blueDark"></i></span> Please wait...
+									</div>
+                                    <div id="trainingFaciAssessmentSetupList">
+                                        <table class="table table-bordered table-hover">
+										<tbody>
+							<?php
+							if (!empty($train_faci_eval_setup_rec)) {
+                                $counter = 0;
+                                foreach ($train_faci_eval_setup_rec as $train_faci_eval_setup) {
+									echo '<tr data-parm-id="' . $train_faci_eval_setup->PARM_CODE . '" data-old-parm-desc="' . $train_faci_eval_setup->PARM_DESC . '" data-parm-label="' . $train_faci_eval_setup->PARM_LABEL . '">
+	                						<th class="text-left col-md-6">' . $train_faci_eval_setup->PARM_LABEL . '</th>
+	                						<td class="text-center col-md-3"><input type="text" name="parm_desc" value="' . $train_faci_eval_setup->PARM_DESC . '" maxlength="200" class="form-control" placeholder="' . $train_faci_eval_setup->PARM_LABEL . '"></td>
+	                						<td class="text-left col-md-2">' . $train_faci_eval_setup->PARM_REMARK . '</td>
+			                                <td class="text-left col-md-1">
+			                                    <button type="button" class="btn btn-primary btn-xs update_train_faci_eval_setup_btn"><i class="fa fa-save"></i> Save</button>
+			                                </td>
+            							</tr>';
+                              	}
+							} else {
+                            	echo '<tr><td colspan="4" class="text-center">No record found.</td></tr>';
+                        	}
+                          	?>
+										</tbody>
+                                        </table>
+                                    </div>									
                                 </div>
 
 								<div class="tab-pane fade" id="s12">
@@ -518,6 +547,49 @@
 			});
 		}
 	});
+
+	// UPDATE record for Tab 11 - Assessment Setup
+	//$('.updateSetupBtn').click(function() {
+	$('#trainingFaciAssessmentSetupList').on('click','.update_train_faci_eval_setup_btn', function() {
+		var thisBtn = $(this);
+		var parmCode = $(this).parents('tr').data('parm-id');
+		var oldParmDesc = $(this).parents('tr').data('old-parm-desc');
+		var newParmDesc = $(this).parents('tr').find('[name="parm_desc"]').val();
+		var parmLabel = $(this).parents('tr').data('parm-label');
+		
+		if (!newParmDesc) {
+			$.alert({
+				title: 'Alert!',
+				content: 'Please enter ' + parmLabel,
+				type: 'red'
+			});
+			return;
+		}
+		
+		document.getElementById("alertT11").style.display = "block";
+		$.ajax({
+			type: 'POST',
+			url: '<?php echo $this->lib->class_url('updateTrainFaciEvalSetup')?>',
+			data: {'parmCode' : parmCode, 'oldParmDesc' : oldParmDesc, 'newParmDesc' : newParmDesc},
+			dataType: 'JSON',
+			success: function(res) {
+				if (res.sts==1) {
+					$.alert({
+						title: 'Message!',
+						content: res.msg,
+						type: 'green'
+					});	
+				} else {
+					$.alert({
+						title: 'Message!',
+						content: res.msg,
+						type: 'red'
+					});	
+				}
+				document.getElementById("alertT11").style.display = "none";
+			}
+		});
+	});		
 
 	// filter list training assessment setup
 	$('.listFilterAst').change(function() {

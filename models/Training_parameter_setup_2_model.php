@@ -219,7 +219,7 @@ class Training_parameter_setup_2_model extends MY_Model
         $this->db->select('*');
         $this->db->from('ims_hris.training_assessment_setup');
         $this->db->where('tas_code', $codeTAS);
-        $this->db->where("tas_type IN 'EFFECTIVENESS'");
+        $this->db->where("tas_type IN ('EFFECTIVENESS')");
         $q = $this->db->get();
 
         return $q->row_case('UPPER');
@@ -740,7 +740,7 @@ class Training_parameter_setup_2_model extends MY_Model
     {
         $this->db->select('*');
         $this->db->from('ims_hris.training_fee_setup');
-        $this->db->join('ims_hris.sdepartment_main', 'ims_hris.training_fee_setup.tfs_registrar_approve = ims_hris.department_main.dm_dept_code');
+        $this->db->join('ims_hris.department_main', 'ims_hris.training_fee_setup.tfs_registrar_approve = ims_hris.department_main.dm_dept_code');
         $this->db->where('tfs_code', $codeTFS);
         $q = $this->db->get();
 

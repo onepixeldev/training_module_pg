@@ -888,7 +888,7 @@ class Training_parameter_setup_model extends MY_Model
         $this->db->select('*');
         $this->db->from('ims_hris.training_assessment_setup');
         $this->db->where('tas_code', $code_tasv);
-        $this->db->where("tas_type IN", $type_tasv);
+        $this->db->where("tas_type in ('".$type_tasv."')");
         $q = $this->db->get();
 
         return $q->row_case('UPPER');
@@ -899,9 +899,9 @@ class Training_parameter_setup_model extends MY_Model
     {
         $this->db->select('*');
         $this->db->from('ims_hris.training_assessment_grading');
-        $this->db->join('ims_hris.training_assessment_setup', 'ims_hris.training_assessment_grading.TAG_GRADE_TYPE = ims_hris.training_assessment_setup.tas_type');
+        $this->db->join('ims_hris.training_assessment_setup', 'ims_hris.training_assessment_grading.tag_grade_type = ims_hris.training_assessment_setup.tas_type');
         //$this->db->where('STA_ASSESSMENT_CODE', $code_tasv);
-        $this->db->where("ims_hris.training_assessment_setup.tas_type IN", $tasv_type);
+        $this->db->where("ims_hris.training_assessment_setup.tas_type in ('".$tasv_type."')");
         $q = $this->db->get();
 
         return $q->row_case('UPPER');
@@ -945,7 +945,8 @@ class Training_parameter_setup_model extends MY_Model
     public function deleteTASVdb($tasv_code, $tasv_type)
     {
         $this->db->where('tas_code', $tasv_code);
-        $this->db->where("tas_type IN", $tasv_type);
+        $this->db->where("tas_type in ('".$tasv_type."')");
+        // $date_from = "to_date('".$form['date_from']."', 'DD/MM/YYYY')";
         return $this->db->delete('ims_hris.training_assessment_setup');
     }
 
@@ -966,7 +967,7 @@ class Training_parameter_setup_model extends MY_Model
         
         
         $this->db->where('tas_code', $code_tasv);
-        $this->db->where("tas_type IN", $type_tasv);
+        $this->db->where("tas_type in ('".$type_tasv."')");
         
         return $this->db->update("ims_hris.training_assessment_setup", $data);
     }
@@ -983,7 +984,7 @@ class Training_parameter_setup_model extends MY_Model
     {
         $this->db->select('*');
         $this->db->from('ims_hris.training_assessment_grading');
-        $this->db->where("tag_grade_type IN", $assessmentType);
+        $this->db->where("tag_grade_type in ('".$assessmentType."')");
         $this->db->order_by('tag_grade_code ASC');
         $q = $this->db->get();
         
@@ -996,7 +997,7 @@ class Training_parameter_setup_model extends MY_Model
         $this->db->select('*');
         $this->db->from('ims_hris.training_assessment_grading');
         $this->db->where("tag_grade_code", $code_tg);
-        $this->db->where("tag_grade_type IN", $type_tg);
+        $this->db->where("tag_grade_type in ('".$type_tg."')");
         $q = $this->db->get();
 
         return $q->row_case('UPPER');
@@ -1025,7 +1026,7 @@ class Training_parameter_setup_model extends MY_Model
     public function deleteTGdb($tg_code, $tg_type)
     {
         $this->db->where('tag_grade_code', $tg_code);
-        $this->db->where("tag_grade_type IN", $tg_type);
+        $this->db->where("tag_grade_type in ('".$tg_type."')");
         return $this->db->delete('ims_hris.training_assessment_grading');
     }
 
@@ -1041,7 +1042,7 @@ class Training_parameter_setup_model extends MY_Model
         
         
         $this->db->where('tag_grade_code', $code_tg);
-        $this->db->where("tag_grade_type IN", $type_tg);
+        $this->db->where("tag_grade_type in ('".$type_tg."')");
         
         return $this->db->update("ims_hris.training_assessment_grading", $data);
     }
@@ -1089,7 +1090,7 @@ class Training_parameter_setup_model extends MY_Model
             "trt_desc" => strtoupper($form['requirement_type'])
         );
         
-        return $this->db->insert("ims_hris.TRAINING_REQUIREMENT_TYPE", $data);
+        return $this->db->insert("ims_hris.training_requirement_type", $data);
     }
     
     /*_______________________
@@ -1203,7 +1204,7 @@ class Training_parameter_setup_model extends MY_Model
             "toh_external_agency" => $form['external_agency']
         );
         
-        return $this->db->insert("ims_hris.x", $data);
+        return $this->db->insert("ims_hris.training_organizer_head", $data);
     }
     
     /*_______________________

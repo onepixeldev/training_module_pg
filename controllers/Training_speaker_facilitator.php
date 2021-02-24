@@ -5,6 +5,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Training_speaker_facilitator extends MY_Controller
 {
     private $staff_id;
+    private $rep_path = "/Reports/PG_MyHRIS/HRA_AT/";
 
     public function __construct()
     {
@@ -302,7 +303,7 @@ class Training_speaker_facilitator extends MY_Controller
 			$this->jasperreport->setAttachment();
 		}
 		
-		$this->jasperreport->runReport("/Reports/MyHRIS/HRA_AT/" . $repCode,$format,$param);
+		$this->jasperreport->runReport($this->rep_path.$repCode,$format,$param);
     }
 
 

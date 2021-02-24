@@ -95,10 +95,22 @@ class Training_speaker_facilitator_model extends MY_Model {
             "es_address" => $form['addressES'],
             "es_pcode" => $form['postcodeES'],
             "es_city" => $form['cityES'],
-            "es_state" => $form['state_es'],
-            "es_country" => $form['country_es'],
+            // "es_state" => $form['state_es'],
+            // "es_country" => $form['country_es'],
             "es_enter_by" => $this->staff_id,
         );
+
+        if(!empty($form['country_es'])) {
+            $this->db->set("es_country", "'".$form['country_es']."'", false);
+        } else {
+            $this->db->set("es_country", NULL, true);
+        }
+
+        if(!empty($form['state_es'])) {
+            $this->db->set("es_state", "'".$form['state_es']."'", false);
+        } else {
+            $this->db->set("es_state", NULL, true);
+        }
 
         // set data to be inserted (reference id, date)
         $this->db->set("es_speaker_id", $insertESID, false);
@@ -123,10 +135,22 @@ class Training_speaker_facilitator_model extends MY_Model {
             "es_address" => $form['addressES'],
             "es_pcode" => $form['postcodeES'],
             "es_city" => $form['cityES'],
-            "es_state" => $form['state_es'],
-            "es_country" => $form['country_es'],
+            // "es_state" => $form['state_es'],
+            // "es_country" => $form['country_es'],
             "es_update_by" => $this->staff_id,
         );
+
+        if(!empty($form['country_es'])) {
+            $this->db->set("es_country", "'".$form['country_es']."'", false);
+        } else {
+            $this->db->set("es_country", NULL, true);
+        }
+
+        if(!empty($form['state_es'])) {
+            $this->db->set("es_state", "'".$form['state_es']."'", false);
+        } else {
+            $this->db->set("es_state", NULL, true);
+        }
 
         // set data to be inserted (reference id, date)
         $this->db->set("es_speaker_id", $updateESID, false);
@@ -190,12 +214,24 @@ class Training_speaker_facilitator_model extends MY_Model {
             "ef_area_2" => $form['area2'],
             "ef_area_3" => $form['area3'],
             "ef_address" => $form['addressEF'],
-            "ef_state" => $form['state'],
-            "ef_country" => $form['country'],
+            // "ef_state" => $form['state'],
+            // "ef_country" => $form['country'],
             "ef_pcode" => $form['postcodeEF'],
             "ef_city" => $form['cityEF'],
             "ef_enter_by" => $this->staff_id,
         );
+
+        if(!empty($form['country'])) {
+            $this->db->set("ef_country", "'".$form['country']."'", false);
+        } else {
+            $this->db->set("ef_country", NULL, true);
+        }
+
+        if(!empty($form['state'])) {
+            $this->db->set("ef_state", "'".$form['state']."'", false);
+        } else {
+            $this->db->set("ef_state", NULL, true);
+        }
 
         // set data to be inserted (reference id, date)
         $this->db->set("ef_facilitator_id", $insertEFID, false);
@@ -285,12 +321,24 @@ class Training_speaker_facilitator_model extends MY_Model {
             "ef_area_2" => $form['area2'],
             "ef_area_3" => $form['area3'],
             "ef_address" => $form['addressEF'],
-            "ef_state" => $form['state'],
-            "ef_country" => $form['country'],
+            // "ef_state" => $form['state'],
+            // "ef_country" => $form['country'],
             "ef_pcode" => $form['postcodeEF'],
             "ef_city" => $form['cityEF'],
             "ef_update_by" => $this->staff_id,
         );
+
+        if(!empty($form['country'])) {
+            $this->db->set("ef_country", "'".$form['country']."'", false);
+        } else {
+            $this->db->set("ef_country", NULL, true);
+        }
+
+        if(!empty($form['state'])) {
+            $this->db->set("ef_state", "'".$form['state']."'", false);
+        } else {
+            $this->db->set("ef_state", NULL, true);
+        }
 
         // set data to be set (reference id, date)
         $this->db->set("ef_facilitator_id", $updateESID, false);
