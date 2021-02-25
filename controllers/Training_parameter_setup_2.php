@@ -568,10 +568,10 @@ class Training_parameter_setup_2 extends MY_Controller
 
         if (!empty($tasCode) && !empty($tasType) ) {
             // Check whether record related to another table
-            $recDel = $this->mdl->getTASEffDetailDel($tasType);
+            $recDel = $this->mdl->getTASEffDetailDel($tasCode, $tasType);
     
             // If not exists, proceed delete record
-            if (empty($recDel)) {
+            if (!empty($recDel)) {
                 $del = $this->mdl->deleteTASEffdb($tasCode, $tasType);
                 
                 if ($del > 0) {

@@ -12,24 +12,20 @@
 		</thead>
 		<tbody>
 		<?php
-			$no = 0;
-			if (!empty($training_organizer_head)) {
-				foreach ($training_organizer_head as $toh) {
-					echo '
-					<tr>
-						<td class="text-center col-md-1">' . $toh->TOH_ORG_CODE . '</td>
-						<td class="text-left">' . $toh->TOH_ORG_DESC . '</td>
-						<td class="text-center col-md-1">' . $toh->CM_COUNTRY_DESC . '</td>
-                        <td class="text-center col-md-3">
-                            <button type="button" class="btn btn-info btn-xs detail_toh" title="More details"><i class="fa fa-info-circle"></i> Detail</button>
-							<button type="button" class="btn btn-success btn-xs edit_toh" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
-							<button type="button" class="btn btn-danger btn-xs delete_toh" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
-						</td>
-					</tr>
-					';
-				}
-			} else {
-				echo '<tr><td colspan="8" class="text-center">No record found.</td></tr>';
+			// $no = 0;
+			foreach ($training_organizer_head as $toh) {
+				echo '
+				<tr>
+					<td class="text-center col-md-1">' . $toh->TOH_ORG_CODE . '</td>
+					<td class="text-left">' . $toh->TOH_ORG_DESC . '</td>
+					<td class="text-center col-md-1">' . $toh->CM_COUNTRY_DESC . '</td>
+					<td class="text-center col-md-3">
+						<button type="button" class="btn btn-info btn-xs detail_toh" title="More details"><i class="fa fa-info-circle"></i> Detail</button>
+						<button type="button" class="btn btn-success btn-xs edit_toh" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
+						<button type="button" class="btn btn-danger btn-xs delete_toh" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
+					</td>
+				</tr>
+				';
 			}
 		?>
 		</tbody>

@@ -16,61 +16,58 @@
 		</thead>
 		<tbody>
 		<?php
-			$no = 0;
-			if (!empty($training_participant_role_list)) {
-				foreach ($training_participant_role_list as $tpr) {
+			// $no = 0;
+			
+			foreach ($training_participant_role_list as $tpr) {
 
-					if ($tpr->TPR_CPD_COUNTED_NACAD == 'Y') {
-						$tprCPDCountedNacad = 'YES';
-					} else if($tpr->TPR_CPD_COUNTED_NACAD == 'N') {
-						$tprCPDCountedNacad = 'NO';
-					} else{
-						$tprCPDCountedNacad = '';
-					}
-
-					if ($tpr->TPR_DISPLAY_TRAINING == 'Y') {
-						$displayTraining = 'YES';
-					} else if($tpr->TPR_DISPLAY_TRAINING == 'N') {
-						$displayTraining = 'NO';
-					} else{
-						$displayTraining = '';
-					}
-
-					if ($tpr->TPR_DISPLAY_CONFERENCE == 'Y') {
-						$displayConference = 'YES';
-					} else if($tpr->TPR_DISPLAY_CONFERENCE == 'N') {
-						$displayConference = 'NO';
-					} else{
-						$displayConference = '';
-					}
-
-					if ($tpr->TPR_CPD_COUNTED_ACAD == 'Y') {
-						$CPDCountedAcad = 'YES';
-					} else if($tpr->TPR_CPD_COUNTED_ACAD == 'N') {
-						$CPDCountedAcad = 'NO';
-					} else{
-						$CPDCountedAcad = '';
-					}
-
-
-					echo '
-					<tr>
-						<td class="text-center col-md-1">' . $tpr->TPR_CODE . '</td>
-						<td class="text-left">' . $tpr->TPR_DESC . '</td>
-						<td class="text-center col-md-1">' . $tpr->TPR_ORDER_BY . '</td>
-						<td class="text-center col-md-1">' . $tprCPDCountedNacad . '</td>
-						<td class="text-center col-md-1">' . $CPDCountedAcad . '</td>
-						<td class="text-center col-md-1">' . $displayTraining . '</td>
-						<td class="text-center col-md-1">' . $displayConference . '</td>
-						<td class="text-center col-md-2">
-							<button type="button" class="btn btn-success btn-xs edit_tpr" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
-							<button type="button" class="btn btn-danger btn-xs delete_tpr" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
-						</td>
-					</tr>
-					';
+				if ($tpr->TPR_CPD_COUNTED_NACAD == 'Y') {
+					$tprCPDCountedNacad = 'YES';
+				} else if($tpr->TPR_CPD_COUNTED_NACAD == 'N') {
+					$tprCPDCountedNacad = 'NO';
+				} else{
+					$tprCPDCountedNacad = '';
 				}
-			} else {
-				echo '<tr><td colspan="8" class="text-center">No record found.</td></tr>';
+
+				if ($tpr->TPR_DISPLAY_TRAINING == 'Y') {
+					$displayTraining = 'YES';
+				} else if($tpr->TPR_DISPLAY_TRAINING == 'N') {
+					$displayTraining = 'NO';
+				} else{
+					$displayTraining = '';
+				}
+
+				if ($tpr->TPR_DISPLAY_CONFERENCE == 'Y') {
+					$displayConference = 'YES';
+				} else if($tpr->TPR_DISPLAY_CONFERENCE == 'N') {
+					$displayConference = 'NO';
+				} else{
+					$displayConference = '';
+				}
+
+				if ($tpr->TPR_CPD_COUNTED_ACAD == 'Y') {
+					$CPDCountedAcad = 'YES';
+				} else if($tpr->TPR_CPD_COUNTED_ACAD == 'N') {
+					$CPDCountedAcad = 'NO';
+				} else{
+					$CPDCountedAcad = '';
+				}
+
+
+				echo '
+				<tr>
+					<td class="text-center col-md-1">' . $tpr->TPR_CODE . '</td>
+					<td class="text-left">' . $tpr->TPR_DESC . '</td>
+					<td class="text-center col-md-1">' . $tpr->TPR_ORDER_BY . '</td>
+					<td class="text-center col-md-1">' . $tprCPDCountedNacad . '</td>
+					<td class="text-center col-md-1">' . $CPDCountedAcad . '</td>
+					<td class="text-center col-md-1">' . $displayTraining . '</td>
+					<td class="text-center col-md-1">' . $displayConference . '</td>
+					<td class="text-center col-md-2">
+						<button type="button" class="btn btn-success btn-xs edit_tpr" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
+						<button type="button" class="btn btn-danger btn-xs delete_tpr" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
+					</td>
+				</tr>
+				';
 			}
 		?>
 		</tbody>

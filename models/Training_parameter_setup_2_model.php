@@ -226,11 +226,12 @@ class Training_parameter_setup_2_model extends MY_Model
     }
 
     // -postgres
-    public function getTASEffDetailDel($typeTAS)
+    public function getTASEffDetailDel($tasCode, $typeTAS)
     {
         $this->db->select('*');
-        $this->db->from('ims_hris.training_assessment_grading');
-        $this->db->where('tag_grade_type', $typeTAS);
+        $this->db->from('ims_hris.training_assessment_setup');
+        $this->db->where('tas_type', $typeTAS);
+        $this->db->where('tas_code', $tasCode);
         $q = $this->db->get();
 
         return $q->row_case('UPPER');
@@ -331,7 +332,7 @@ class Training_parameter_setup_2_model extends MY_Model
     public function deleteTASEffdb($tasCode, $tasType)
     {
         $this->db->where('tas_code', $tasCode);
-        $this->db->where('tas_type IN', $tasType);
+        $this->db->where('tas_type', $tasType);
         return $this->db->delete('ims_hris.training_assessment_setup');
     }
 

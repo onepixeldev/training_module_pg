@@ -11,22 +11,19 @@
 		</thead>
 		<tbody>
 		<?php
-			$no = 0;
-			if (!empty($training_participant_status_list)) {
-				foreach ($training_participant_status_list as $tps) {
-					echo '
-					<tr>
-						<td class="text-center col-md-1">' . $tps->TPS_CODE . '</td>
-						<td class="text-left">' . $tps->TPS_DESC . '</td>
-						<td class="text-center col-md-2">
-							<button type="button" class="btn btn-success btn-xs edit_tps" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
-							<button type="button" class="btn btn-danger btn-xs delete_tps" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
-						</td>
-					</tr>
-					';
-				}
-			} else {
-				echo '<tr><td colspan="8" class="text-center">No record found.</td></tr>';
+			// $no = 0;
+			
+			foreach ($training_participant_status_list as $tps) {
+				echo '
+				<tr>
+					<td class="text-center col-md-1">' . $tps->TPS_CODE . '</td>
+					<td class="text-left">' . $tps->TPS_DESC . '</td>
+					<td class="text-center col-md-2">
+						<button type="button" class="btn btn-success btn-xs edit_tps" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
+						<button type="button" class="btn btn-danger btn-xs delete_tps" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
+					</td>
+				</tr>
+				';
 			}
 		?>
 		</tbody>

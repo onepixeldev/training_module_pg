@@ -11,22 +11,18 @@
 		</thead>
 		<tbody>
 		<?php
-			$no = 0;
-			if (!empty($training_organizer_level_list)) {
-				foreach ($training_organizer_level_list as $tol) {
-					echo '
-					<tr>
-						<td class="text-center col-md-1">' . $tol->TOL_CODE . '</td>
-						<td class="text-left">' . $tol->TOL_DESC . '</td>
-						<td class="text-center col-md-2">
-							<button type="button" class="btn btn-success btn-xs edit_tol" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
-							<button type="button" class="btn btn-danger btn-xs delete_tol" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
-						</td>
-					</tr>
-					';
-				}
-			} else {
-				echo '<tr><td colspan="8" class="text-center">No record found.</td></tr>';
+			// $no = 0;
+			foreach ($training_organizer_level_list as $tol) {
+				echo '
+				<tr>
+					<td class="text-center col-md-1">' . $tol->TOL_CODE . '</td>
+					<td class="text-left">' . $tol->TOL_DESC . '</td>
+					<td class="text-center col-md-2">
+						<button type="button" class="btn btn-success btn-xs edit_tol" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
+						<button type="button" class="btn btn-danger btn-xs delete_tol" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
+					</td>
+				</tr>
+				';
 			}
 		?>
 		</tbody>

@@ -15,60 +15,57 @@
 		</thead>
 		<tbody>
 		<?php
-			$no = 0;
-			if (!empty($training_type_list)) {
-				foreach ($training_type_list as $tt) {
+			// $no = 0;
 
-					if ($tt->TT_COUNTED == 'Y') {
-						$counted = 'YES';
-					} else if($tt->TT_COUNTED == 'N') {
-						$counted = 'NO';
-					} else{
-						$counted = '';
-					}
+			foreach ($training_type_list as $tt) {
 
-					if ($tt->TT_EVALUATION == 'Y') {
-						$evaluation = 'YES';
-					} else if($tt->TT_EVALUATION == 'N') {
-						$evaluation = 'NO';
-					} else{
-						$evaluation = '';
-					}
-
-					if ($tt->TT_CONFIRMATION == 'Y') {
-						$confirmation = 'YES';
-					} else if($tt->TT_CONFIRMATION == 'N') {
-						$confirmation = 'NO';
-					} else{
-						$confirmation = '';
-					}
-
-					if ($tt->TT_SERVICE_BOOK == 'Y') {
-						$svcBook = 'YES';
-					} else if($tt->TT_SERVICE_BOOK == 'N') {
-						$svcBook = 'NO';
-					} else{
-						$svcBook = '';
-					}
-
-
-					echo '
-					<tr>
-						<td class="text-center col-md-1">' . $tt->TT_CODE . '</td>
-						<td class="text-left">' . $tt->TT_DESC . '</td>
-						<td class="text-center col-md-1">' . $counted . '</td>
-						<td class="text-center col-md-1">' . $evaluation . '</td>
-						<td class="text-center col-md-1">' . $confirmation . '</td>
-						<td class="text-center col-md-1">' . $svcBook . '</td>
-						<td class="text-center col-md-2">
-							<button type="button" class="btn btn-success btn-xs edit_tt" title="Edit training type Record"><i class="fa fa-edit"></i> Edit</button>
-							<button type="button" class="btn btn-danger btn-xs delete_tt" title="Delete training type Record"><i class="fa fa-trash"> Delete</i></button>
-						</td>
-					</tr>
-					';
+				if ($tt->TT_COUNTED == 'Y') {
+					$counted = 'YES';
+				} else if($tt->TT_COUNTED == 'N') {
+					$counted = 'NO';
+				} else{
+					$counted = '';
 				}
-			} else {
-				echo '<tr><td colspan="8" class="text-center">No record found.</td></tr>';
+
+				if ($tt->TT_EVALUATION == 'Y') {
+					$evaluation = 'YES';
+				} else if($tt->TT_EVALUATION == 'N') {
+					$evaluation = 'NO';
+				} else{
+					$evaluation = '';
+				}
+
+				if ($tt->TT_CONFIRMATION == 'Y') {
+					$confirmation = 'YES';
+				} else if($tt->TT_CONFIRMATION == 'N') {
+					$confirmation = 'NO';
+				} else{
+					$confirmation = '';
+				}
+
+				if ($tt->TT_SERVICE_BOOK == 'Y') {
+					$svcBook = 'YES';
+				} else if($tt->TT_SERVICE_BOOK == 'N') {
+					$svcBook = 'NO';
+				} else{
+					$svcBook = '';
+				}
+
+
+				echo '
+				<tr>
+					<td class="text-center col-md-1">' . $tt->TT_CODE . '</td>
+					<td class="text-left">' . $tt->TT_DESC . '</td>
+					<td class="text-center col-md-1">' . $counted . '</td>
+					<td class="text-center col-md-1">' . $evaluation . '</td>
+					<td class="text-center col-md-1">' . $confirmation . '</td>
+					<td class="text-center col-md-1">' . $svcBook . '</td>
+					<td class="text-center col-md-2">
+						<button type="button" class="btn btn-success btn-xs edit_tt" title="Edit training type Record"><i class="fa fa-edit"></i> Edit</button>
+						<button type="button" class="btn btn-danger btn-xs delete_tt" title="Delete training type Record"><i class="fa fa-trash"> Delete</i></button>
+					</td>
+				</tr>
+				';
 			}
 		?>
 		</tbody>

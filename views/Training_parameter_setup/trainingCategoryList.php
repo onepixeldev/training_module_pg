@@ -16,51 +16,47 @@
 		<tbody>
 		<?php
 			//$no = 0;
-			if (!empty($training_category_list)) {
-				foreach ($training_category_list as $tc) {
+			foreach ($training_category_list as $tc) {
 
-					if ($tc->TC_STATUS == 'Y') {
-						$status = 'ACTIVE';
-					} else if($tc->TC_STATUS == 'N') {
-						$status = 'INACTIVE';
-					} else{
-						$status = '';
-					}
-
-					if ($tc->TC_CONFIRMATION == 'Y') {
-						$confirmation = 'YES';
-					} else if($tc->TC_CONFIRMATION == 'N') {
-						$confirmation = 'NO';
-					} else{
-						$confirmation = '';
-					}
-
-					if ($tc->TC_STRUCTURED == 'Y') {
-						$structured = 'YES';
-					} else if($tc->TC_STRUCTURED == 'N') {
-						$structured = 'NO';
-					} else{
-						$structured = '';
-					}
-
-
-					echo '
-					<tr>
-						<td class="text-left">' . $tc->TC_CATEGORY . '</td>
-						<td class="text-center col-md-1">' . $confirmation . '</td>
-						<td class="text-center col-md-1">' . $tc->TC_ELEMENT . '</td>
-						<td class="text-center col-md-1">' . $structured . '</td>
-						<td class="text-center col-md-1">' . $tc->TC_RANKING . '</td>
-						<td class="text-center col-md-1">' . $status . '</td>
-						<td class="text-center col-md-2">
-							<button type="button" class="btn btn-success btn-xs edit_tc" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
-							<button type="button" class="btn btn-danger btn-xs delete_tc" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
-						</td>
-					</tr>
-					';
+				if ($tc->TC_STATUS == 'Y') {
+					$status = 'ACTIVE';
+				} else if($tc->TC_STATUS == 'N') {
+					$status = 'INACTIVE';
+				} else{
+					$status = '';
 				}
-			} else {
-				echo '<tr><td colspan="8" class="text-center">No record found.</td></tr>';
+
+				if ($tc->TC_CONFIRMATION == 'Y') {
+					$confirmation = 'YES';
+				} else if($tc->TC_CONFIRMATION == 'N') {
+					$confirmation = 'NO';
+				} else{
+					$confirmation = '';
+				}
+
+				if ($tc->TC_STRUCTURED == 'Y') {
+					$structured = 'YES';
+				} else if($tc->TC_STRUCTURED == 'N') {
+					$structured = 'NO';
+				} else{
+					$structured = '';
+				}
+
+
+				echo '
+				<tr>
+					<td class="text-left">' . $tc->TC_CATEGORY . '</td>
+					<td class="text-center col-md-1">' . $confirmation . '</td>
+					<td class="text-center col-md-1">' . $tc->TC_ELEMENT . '</td>
+					<td class="text-center col-md-1">' . $structured . '</td>
+					<td class="text-center col-md-1">' . $tc->TC_RANKING . '</td>
+					<td class="text-center col-md-1">' . $status . '</td>
+					<td class="text-center col-md-2">
+						<button type="button" class="btn btn-success btn-xs edit_tc" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
+						<button type="button" class="btn btn-danger btn-xs delete_tc" title="Delete Record"><i class="fa fa-trash"></i> Delete</button>
+					</td>
+				</tr>
+				';
 			}
 		?>
 		</tbody>

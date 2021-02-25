@@ -11,22 +11,19 @@
 		</thead>
 		<tbody>
 		<?php
-			$no = 0;
-			if (!empty($training_sponsor_list)) {
-				foreach ($training_sponsor_list as $tsl) {
-					echo '
-					<tr>
-						<td class="text-center col-md-1">' . $tsl->TSL_CODE . '</td>
-						<td class="text-left">' . $tsl->TSL_DESC . '</td>
-						<td class="text-center col-md-2">
-							<button type="button" class="btn btn-success btn-xs edit_tsl" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
-							<button type="button" class="btn btn-danger btn-xs delete_tsl" title="Delete Record"><i class="fa fa-trash"> Delete</i></button>
-						</td>
-					</tr>
-					';
-				}
-			} else {
-				echo '<tr><td colspan="8" class="text-center">No record found.</td></tr>';
+			// $no = 0;
+			
+			foreach ($training_sponsor_list as $tsl) {
+				echo '
+				<tr>
+					<td class="text-center col-md-1">' . $tsl->TSL_CODE . '</td>
+					<td class="text-left">' . $tsl->TSL_DESC . '</td>
+					<td class="text-center col-md-2">
+						<button type="button" class="btn btn-success btn-xs edit_tsl" title="Edit Record"><i class="fa fa-edit"></i> Edit</button>
+						<button type="button" class="btn btn-danger btn-xs delete_tsl" title="Delete Record"><i class="fa fa-trash"> Delete</i></button>
+					</td>
+				</tr>
+				';
 			}
 		?>
 		</tbody>
